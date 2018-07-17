@@ -3,4 +3,4 @@
 # Add all keys and passwords to setting_vars.py
 
 # SECRET_KEY
-PROJ_SECRET_KEY = 'yp^y&lt&320%%nr02gp-bkl%7y3g^c+z1sme3#5f+86_az=bb*'
+PROJ_SECRET_KEY = some_key
