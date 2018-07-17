@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import path, re_path
 from django.contrib.staticfiles.views import serve
 from django.views.generic import RedirectView
+from my_app import views
 
 urlpatterns = [
     re_path(r'^$', serve, kwargs={'path': 'index.html'}, name="index"),
     path('admin/', admin.site.urls),
+    re_path(r'^api/new-company$', views.new_company),
 
     # Serving static JS files in Angular
     re_path(r'^(?!/?static/)(?!/?media/)(?P<path>.*\..*)$', \
