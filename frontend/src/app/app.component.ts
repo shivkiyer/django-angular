@@ -18,18 +18,19 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.http.get('/api/new-company').subscribe(
       (response) => {
-        this.djangoForm = new FormGroup({});
-        this.receivedForm = Object.keys(response.json()['form']);
-        // this.receivedForm.splice(this.receivedForm.indexOf('id'), 1);
-        this.receivedForm.forEach((key_item) => {
-          // if (key_item!== 'id') {
-            this.djangoForm.addControl(
-              key_item,
-              new FormControl()
-            );
-          // }
-        });
-        this.formReceived = true;
+        console.log(response);
+        // this.djangoForm = new FormGroup({});
+        // this.receivedForm = Object.keys(response.json()['form']);
+        // // this.receivedForm.splice(this.receivedForm.indexOf('id'), 1);
+        // this.receivedForm.forEach((key_item) => {
+        //   // if (key_item!== 'id') {
+        //     this.djangoForm.addControl(
+        //       key_item,
+        //       new FormControl()
+        //     );
+        //   // }
+        // });
+        // this.formReceived = true;
       },
       (error) => {
         console.log(error);

@@ -1,6 +1,26 @@
 from django.db import models
+from rest_framework import serializers
 
 # Create your models here.
+
+some_model_dict = {
+    'a': 'char',
+    'b': 'integer',
+    'c': 'email'
+}
+
+class SomeModel(models.Model):
+    a = models.CharField(default="text", max_length=100)
+    b = models.IntegerField(default=1000)
+    c = models.EmailField(default="hello@gmail.com")
+
+
+class SomeModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SomeModel
+        fields = ('a', 'b', 'c')
+
+
 
 class Company(models.Model):
     name = models.CharField(default='Google', max_length=200)
