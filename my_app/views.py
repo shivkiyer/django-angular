@@ -14,6 +14,9 @@ def new_company(request):
     del new_object_as_dict['id']
     new_somemodel = SomeModelSerializer()
     print(new_somemodel)
-    return new_somemodel
+    print()
+    print(new_somemodel.serializer_field_mapping)
+    print()
+    print(dir(new_somemodel))
     # return JsonResponse({'form': new_somemodel})
-    # return HttpResponse(new_somemodel)
+    return HttpResponse(new_somemodel)
