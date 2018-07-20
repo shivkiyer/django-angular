@@ -22,7 +22,7 @@ from my_app import views
 urlpatterns = [
     re_path(r'^$', serve, kwargs={'path': 'index.html'}, name="index"),
     path('admin/', admin.site.urls),
-    re_path(r'^api/new-company$', views.new_company),
+    re_path(r'^api/new-company$', views.new_company, name='new_company'),
 
     # Serving static JS files in Angular
     re_path(r'^(?!/?static/)(?!/?media/)(?P<path>.*\..*)$', \

@@ -1,5 +1,4 @@
 from django.db import models
-from rest_framework import serializers
 
 # Create your models here.
 
@@ -14,11 +13,9 @@ class SomeModel(models.Model):
     b = models.IntegerField(default=1000)
     c = models.EmailField(default="hello@gmail.com")
 
+    def __str__(self):
 
-class SomeModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SomeModel
-        fields = ('a', 'b', 'c')
+        return self.a
 
 
 
