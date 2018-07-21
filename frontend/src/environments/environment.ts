@@ -6,6 +6,6 @@
 export const environment = {
   production: false,
   configSettings: {
-    apiURL: 'http://localhost/api/'
+    apiURL: 'http://localhost:8000/api/'
   }
 };

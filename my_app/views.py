@@ -9,7 +9,6 @@ from .serializers import SomeModelSerializer
 # Create your views here.
 
 def new_company(request):
-    print("Here")
     # new_form = CompanyForm()
     # new_object = Company()
     # new_object_as_dict = model_to_dict(new_object)

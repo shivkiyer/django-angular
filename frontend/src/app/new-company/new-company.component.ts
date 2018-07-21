@@ -15,14 +15,18 @@ export class NewCompanyComponent implements OnInit {
   constructor(private http: Http) { }
 
   ngOnInit() {
-    this.http.get(this.apiBaseURL + 'new-company/').subscribe(
-      (response) => {
-        console.log(response);
-      },
-      (errors) => {
-        console.log(errors);
-      }
-    )
+    this.http.get(this.apiBaseURL + 'new-company',
+        {
+          withCredentials: true
+        }
+      ).subscribe(
+        (response) => {
+          console.log(response);
+        },
+        (errors) => {
+          console.log(errors);
+        }
+      )
   }
 
 }
