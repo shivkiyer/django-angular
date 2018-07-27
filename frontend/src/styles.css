@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+
+.page-spacing {
+  margin-top: 50px;
+}
+
+.label-alignment {
+  text-align: right;
+}
