@@ -30,12 +30,21 @@
                         class="form-control"
                         id="name"
                         formControlName="name">
+
+                <div *ngIf="name.invalid && (name.dirty || name.touched)">
+                  <div *ngIf="name.errors.required">
+                    <p class="alert alert-danger">
+                      Name is required.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="form-group">
             <div class="row">
+
               <div class="col-sm-3 label-alignment">
                 <label for="headquarters"
                         class="control-label">
@@ -48,6 +57,15 @@
                         class="form-control"
                         id="headquarters"
                         formControlName="headquarters">
+
+                <div *ngIf="headquarters.invalid && (headquarters.touched || headquarters.dirty)">
+                  <div *ngIf="headquarters.errors.required">
+                    <p class="alert alert-danger">
+                      Headquarters is required.
+                    </p>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -66,6 +84,15 @@
                         class="form-control"
                         id="address"
                         formControlName="address">
+
+                <div *ngIf="address.invalid && (address.touched || address.dirty)">
+                  <div *ngIf="address.errors.required">
+                    <p class="alert alert-danger">
+                      Address is required.
+                    </p>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -84,7 +111,19 @@
                         class="form-control"
                         id="company_website"
                         formControlName="company_website">
+
+                <div *ngIf="company_website.invalid && (company_website.dirty || company_website.touched)">
+                  <div class="alert alert-danger">
+                    <div *ngIf="company_website.errors.required">
+                      <p>Company website is required.</p>
+                    </div>
+                    <div *ngIf="company_website.errors.pattern">
+                      <p>Website is not a valid URL.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
 
@@ -102,6 +141,20 @@
                         class="form-control"
                         id="established_year"
                         formControlName="established_year">
+
+                <div *ngIf="established_year.invalid && (established_year.dirty || established_year.touched)">
+                  <div class="alert alert-danger">
+                    <div *ngIf="established_year.errors.required">
+                      <p>Field is required.</p>
+                    </div>
+                    <div *ngIf="established_year.errors.min">
+                      <p>Only companies after {{ earliestYear }}</p>
+                    </div>
+                    <div *ngIf="established_year.errors.max">
+                      <p>Only companies before {{ latestYear }}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -109,7 +162,8 @@
           <div class="row">
             <div class="col-sm-offset-3">
               <button type="submit"
-                      class="btn btn-primary">
+                      class="btn btn-primary"
+                      [disabled]="!newCompanyForm.valid">
                       Submit
               </button>
             </div>

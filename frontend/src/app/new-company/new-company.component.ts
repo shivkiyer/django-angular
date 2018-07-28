@@ -10,17 +10,28 @@ import { environment } from './../../environments/environment';
   styleUrls: ['./new-company.component.css']
 })
 export class NewCompanyComponent implements OnInit {
+  earliestYear: number = 1900;
+  latestYear: number = 2018;
 
   apiBaseURL: string = environment.configSettings.apiURL;
   response: string;
+  name: FormControl = new FormControl(null, Validators.required);
+  headquarters: FormControl = new FormControl(null, Validators.required);
+  address: FormControl = new FormControl(null, Validators.required);
+  company_website: FormControl = new FormControl(null, [
+    Validators.required,
+    Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')
+  ]);
+  established_year: FormControl = new FormControl(null, [Validators.required,
+                                              Validators.min(this.earliestYear),
+                                              Validators.max(this.latestYear)]);
+
   newCompanyForm: FormGroup = new FormGroup({
-    'name': new FormControl(),
-    'headquarters': new FormControl(),
-    'address': new FormControl(),
-    'company_website': new FormControl(),
-    'established_year': new FormControl(null, [Validators.required,
-                                                Validators.min(1900),
-                                                Validators.max(2018)])
+    'name': this.name,
+    'headquarters': this.headquarters,
+    'address': this.address,
+    'company_website': this.company_website,
+    'established_year': this.established_year
   });
   displayForm: boolean = false;
 
@@ -48,6 +59,15 @@ export class NewCompanyComponent implements OnInit {
 
   addCompany() {
     console.log(this.newCompanyForm.value);
+    this.http.post(this.apiBaseURL + 'new-company',
+              JSON.stringify(this.newCompanyForm.value)).subscribe(
+      response => {
+        console.log(response);
+      },
+      errors => {
+        console.log(errors);
+      }
+    );
   }
 
 }

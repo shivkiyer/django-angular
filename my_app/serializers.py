@@ -1,7 +1,13 @@
 from rest_framework import serializers
-from my_app.models import SomeModel
+from my_app.models import Company
 
-class SomeModelSerializer(serializers.ModelSerializer):
+class CompanySerializer(serializers.ModelSerializer):
     class Meta:
-        model = SomeModel
-        fields = ('a', 'b', 'c')
+        model = Company
+        fields = (
+            'name',
+            'headquarters',
+            'address',
+            'company_website',
+            'established_year'
+        )

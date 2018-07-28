@@ -2,23 +2,6 @@ from django.db import models
 
 # Create your models here.
 
-some_model_dict = {
-    'a': 'char',
-    'b': 'integer',
-    'c': 'email'
-}
-
-class SomeModel(models.Model):
-    a = models.CharField(default="text", max_length=100)
-    b = models.IntegerField(default=1000)
-    c = models.EmailField(default="hello@gmail.com")
-
-    def __str__(self):
-
-        return self.a
-
-
-
 class Company(models.Model):
     name = models.CharField(default='Google', max_length=200)
     headquarters = models.CharField(default='San Jose, California', max_length=200)
