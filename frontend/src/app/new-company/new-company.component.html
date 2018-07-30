@@ -1,9 +1,42 @@
 <div class="container page-spacing">
-  <p>
-    {{ response }}
+
+  <button type="button"
+          class="btn btn-primary"
+          *ngIf="!showCompanies"
+          (click)="displayCompanies()"
+          [disabled]="!areCompanies">
+          Show Companies
+  </button>
+
+  <button type="button"
+          class="btn btn-primary"
+          *ngIf="showCompanies"
+          (click)="hideCompanies()">
+          Hide Companies
+  </button>
+
+  <p *ngIf="!areCompanies">
+    No companies in database. Click on "New Company" button below to add one.
   </p>
 
-  <p>Click on this button below to launch a blank company form.</p>
+  <div *ngIf="showCompanies">
+    <div *ngIf="areCompanies">
+      <ol>
+        <div *ngFor="let companyItem of response; let companyIndex=index">
+          <li>
+            {{ companyItem.name }} <br>
+            {{ companyItem.headquarters }} <br>
+            <a href="{{ companyItem.company_website }}">
+              {{ companyItem.company_website }}
+            </a>
+          </li>
+        </div>
+      </ol>
+    </div>
+  </div>
+
+  <br><br>
+  <p>Click on "New Company" button below to launch a blank company form.</p>
   <button type='button'
           class='btn btn-primary'
           (click)='emptyForm()'>

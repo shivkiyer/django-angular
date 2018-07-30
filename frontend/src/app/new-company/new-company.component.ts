@@ -14,7 +14,9 @@ export class NewCompanyComponent implements OnInit {
   latestYear: number = 2018;
 
   apiBaseURL: string = environment.configSettings.apiURL;
-  response: string;
+  response: any;
+  showCompanies: boolean = false;
+  areCompanies: boolean = false;
   name: FormControl = new FormControl(null, Validators.required);
   headquarters: FormControl = new FormControl(null, Validators.required);
   address: FormControl = new FormControl(null, Validators.required);
@@ -44,8 +46,10 @@ export class NewCompanyComponent implements OnInit {
         }
       ).subscribe(
         (response) => {
-          console.log(response);
-          this.response = response.json().message;
+          this.response = response.json().companies;
+          if (this.response.length>0) {
+            this.areCompanies = true;
+          }
         },
         (errors) => {
           console.log(errors);
@@ -55,6 +59,20 @@ export class NewCompanyComponent implements OnInit {
 
   emptyForm() {
     this.displayForm = true;
+    this.showCompanies = false;
+  }
+
+  displayCompanies() {
+    if (this.response.length > 0) {
+      this.showCompanies = true;
+    } else {
+      this.showCompanies = false;
+    }
+    this.displayForm = false;
+  }
+
+  hideCompanies() {
+    this.showCompanies = false;
   }
 
   addCompany() {
@@ -62,7 +80,9 @@ export class NewCompanyComponent implements OnInit {
     this.http.post(this.apiBaseURL + 'new-company',
               JSON.stringify(this.newCompanyForm.value)).subscribe(
       response => {
-        console.log(response);
+        this.response.push(this.newCompanyForm.value);
+        this.newCompanyForm.reset();
+        this.displayForm = false;
       },
       errors => {
         console.log(errors);

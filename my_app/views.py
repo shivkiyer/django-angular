@@ -13,10 +13,13 @@ from .serializers import CompanySerializer
 # Create your views here.
 
 @method_decorator(csrf_exempt, name='dispatch')
-@method_decorator(csrf_exempt, name='post')
 class NewCompany(View):
     def get(self, request):
-        return JsonResponse({"message": "Hello world"})
+        company_list = CompanySerializer(Company.objects.all(), many=True)
+        return JsonResponse({
+            "message": "Hello world",
+            "companies": company_list.data
+        })
 
     def post(self, request):
         new_company_data = json.loads(request.body.decode('utf-8'))
