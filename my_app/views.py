@@ -26,3 +26,12 @@ class NewCompany(View):
         new_company = Company(**new_company_data)
         new_company.save()
         return HttpResponse("Done");
+
+    def patch(self, request):
+        changed_company_data = json.loads(request.body.decode('utf-8'))
+        changed_company = Company.objects.get(id=int(changed_company_data['companyId']));
+        changed_company_form = json.loads(changed_company_data['companyForm'])
+        for company_attr, company_val in changed_company_form.items():
+            setattr(changed_company, company_attr, company_val)
+        changed_company.save()
+        return HttpResponse("Done");

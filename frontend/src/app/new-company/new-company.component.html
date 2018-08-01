@@ -21,17 +21,48 @@
 
   <div *ngIf="showCompanies">
     <div *ngIf="areCompanies">
+
       <ol>
         <div *ngFor="let companyItem of response; let companyIndex=index">
           <li>
-            {{ companyItem.name }} <br>
+
+            <span (click)="chooseCompany(companyIndex)">
+              {{ companyItem.name }}
+            </span> <br>
             {{ companyItem.headquarters }} <br>
+            <span *ngIf="companyIndex===expandCompany">
+              {{ companyItem.address }} <br>
+            </span>
             <a href="{{ companyItem.company_website }}">
               {{ companyItem.company_website }}
             </a>
+            <span *ngIf="companyIndex===expandCompany">
+              <br> {{ companyItem.established_year }}
+            </span>
+
+            <div *ngIf="companyIndex===expandCompany">
+              <div class="row">
+                <div class="col-md-1">
+                  <button type="button"
+                          class="btn btn-general"
+                          (click)="modifyCompany(companyIndex)">
+                          Modify
+                  </button>
+                </div>
+                <div class="col-md-1 left-space-6">
+                  <button type="button"
+                          class="btn btn-danger"
+                          (click)="deleteCompany(companyIndex)">
+                          Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </li>
         </div>
       </ol>
+
     </div>
   </div>
 
@@ -196,8 +227,16 @@
             <div class="col-sm-offset-3">
               <button type="submit"
                       class="btn btn-primary"
-                      [disabled]="!newCompanyForm.valid">
+                      [disabled]="!newCompanyForm.valid"
+                      *ngIf="blankForm">
                       Submit
+              </button>
+              <button type="button"
+                      class="btn btn-primary"
+                      [disabled]="!newCompanyForm.valid"
+                      *ngIf="!blankForm"
+                      (click)="updateCompany(updateCompanyIndex)">
+                      Change
               </button>
             </div>
           </div>

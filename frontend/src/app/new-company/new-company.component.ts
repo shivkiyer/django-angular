@@ -36,6 +36,9 @@ export class NewCompanyComponent implements OnInit {
     'established_year': this.established_year
   });
   displayForm: boolean = false;
+  expandCompany: number = -1;
+  blankForm: boolean = true;
+  updateCompanyIndex: number = -1;
 
   constructor(private http: Http) { }
 
@@ -47,6 +50,7 @@ export class NewCompanyComponent implements OnInit {
       ).subscribe(
         (response) => {
           this.response = response.json().companies;
+          console.log(this.response);
           if (this.response.length>0) {
             this.areCompanies = true;
           }
@@ -60,6 +64,7 @@ export class NewCompanyComponent implements OnInit {
   emptyForm() {
     this.displayForm = true;
     this.showCompanies = false;
+    this.blankForm = true;
   }
 
   displayCompanies() {
@@ -75,19 +80,69 @@ export class NewCompanyComponent implements OnInit {
     this.showCompanies = false;
   }
 
+  companyAdded() {
+    this.newCompanyForm.reset();
+    this.displayForm = false;
+    if (!this.areCompanies) {
+      this.areCompanies = true;
+    }
+  }
+
   addCompany() {
     console.log(this.newCompanyForm.value);
     this.http.post(this.apiBaseURL + 'new-company',
               JSON.stringify(this.newCompanyForm.value)).subscribe(
       response => {
         this.response.push(this.newCompanyForm.value);
-        this.newCompanyForm.reset();
-        this.displayForm = false;
+        this.companyAdded();
       },
       errors => {
         console.log(errors);
       }
     );
+  }
+
+  chooseCompany(companyIndex: number) {
+    if (companyIndex===this.expandCompany) {
+      this.expandCompany = -1;
+    } else {
+      this.expandCompany = companyIndex;
+    }
+  }
+
+  modifyCompany(companyIndex: number) {
+    this.newCompanyForm.setValue({
+      'name': this.response[companyIndex].name,
+      'headquarters': this.response[companyIndex].headquarters,
+      'address': this.response[companyIndex].address,
+      'company_website': this.response[companyIndex].company_website,
+      'established_year': this.response[companyIndex].established_year
+    })
+    this.displayForm = true;
+    this.showCompanies = false;
+    this.blankForm = false;
+    this.updateCompanyIndex = companyIndex;
+  }
+
+  updateCompany(companyIndex: number) {
+    this.http.patch(this.apiBaseURL + 'new-company',
+        {
+          companyId: this.response[companyIndex].id,
+          companyForm: JSON.stringify(this.newCompanyForm.value)
+        })
+        .subscribe(
+          response => {
+            Object.keys(this.response[companyIndex]).forEach(
+              item => {
+                this.response[companyIndex][item] = this.newCompanyForm.value[item];
+              }
+            );
+            this.companyAdded();
+          },
+          errors => {
+            console.log(errors);
+          }
+        )
   }
 
 }
