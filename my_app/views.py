@@ -12,26 +12,39 @@ from .serializers import CompanySerializer
 
 # Create your views here.
 
-@method_decorator(csrf_exempt, name='dispatch')
 class NewCompany(View):
-    def get(self, request):
-        company_list = CompanySerializer(Company.objects.all(), many=True)
+    company_list = []
+    def get(self, request, *args, **kwargs):
+        self.company_list = CompanySerializer(Company.objects.all(), many=True)
         return JsonResponse({
-            "message": "Hello world",
-            "companies": company_list.data
+            "companies": self.company_list.data
         })
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         new_company_data = json.loads(request.body.decode('utf-8'))
         new_company = Company(**new_company_data)
         new_company.save()
-        return HttpResponse("Done");
+        return JsonResponse({
+            "company": model_to_dict(new_company)
+        })
 
-    def patch(self, request):
+    def patch(self, request, *args, **kwargs):
         changed_company_data = json.loads(request.body.decode('utf-8'))
-        changed_company = Company.objects.get(id=int(changed_company_data['companyId']));
+        changed_company = Company.objects.get(id=int(changed_company_data['companyId']))
         changed_company_form = json.loads(changed_company_data['companyForm'])
         for company_attr, company_val in changed_company_form.items():
             setattr(changed_company, company_attr, company_val)
         changed_company.save()
-        return HttpResponse("Done");
+        return JsonResponse({
+            "company": model_to_dict(changed_company)
+        })
+
+    def delete(self, request, *args, **kwargs):
+        if 'id' in kwargs:
+            company_id = kwargs['id']
+        delete_company = Company.objects.get(id=int(company_id))
+        company_deleted = model_to_dict(delete_company)
+        delete_company.delete()
+        return JsonResponse({
+            "company": company_deleted
+        })

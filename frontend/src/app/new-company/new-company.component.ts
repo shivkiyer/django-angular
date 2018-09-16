@@ -14,7 +14,7 @@ export class NewCompanyComponent implements OnInit {
   latestYear: number = 2018;
 
   apiBaseURL: string = environment.configSettings.apiURL;
-  response: any;
+  companyList: any;
   showCompanies: boolean = false;
   areCompanies: boolean = false;
   name: FormControl = new FormControl(null, Validators.required);
@@ -42,24 +42,15 @@ export class NewCompanyComponent implements OnInit {
 
   constructor(private http: Http) { }
 
-  ngOnInit() {
-    this.http.get(this.apiBaseURL + 'new-company',
+  fetchCompanyList() {
+    return this.http.get(this.apiBaseURL + 'new-company',
         {
           withCredentials: true
         }
-      ).subscribe(
-        (response) => {
-          this.response = response.json().companies;
-          console.log(this.response);
-          if (this.response.length>0) {
-            this.areCompanies = true;
-          }
-        },
-        (errors) => {
-          console.log(errors);
-        }
-      )
+      );
   }
+
+  ngOnInit() {}
 
   emptyForm() {
     this.displayForm = true;
@@ -68,12 +59,20 @@ export class NewCompanyComponent implements OnInit {
   }
 
   displayCompanies() {
-    if (this.response.length > 0) {
-      this.showCompanies = true;
-    } else {
-      this.showCompanies = false;
-    }
-    this.displayForm = false;
+    this.fetchCompanyList().subscribe(
+      (response) => {
+        this.companyList = response.json().companies;
+        console.log(this.companyList);
+        if (this.companyList.length>0) {
+          this.areCompanies = true;
+          this.showCompanies = true;
+        }
+        this.displayForm = false;
+      },
+      (errors) => {
+        console.log(errors);
+      }
+    );
   }
 
   hideCompanies() {
@@ -93,7 +92,7 @@ export class NewCompanyComponent implements OnInit {
     this.http.post(this.apiBaseURL + 'new-company',
               JSON.stringify(this.newCompanyForm.value)).subscribe(
       response => {
-        this.response.push(this.newCompanyForm.value);
+        this.companyList.push(this.newCompanyForm.value);
         this.companyAdded();
       },
       errors => {
@@ -112,11 +111,11 @@ export class NewCompanyComponent implements OnInit {
 
   modifyCompany(companyIndex: number) {
     this.newCompanyForm.setValue({
-      'name': this.response[companyIndex].name,
-      'headquarters': this.response[companyIndex].headquarters,
-      'address': this.response[companyIndex].address,
-      'company_website': this.response[companyIndex].company_website,
-      'established_year': this.response[companyIndex].established_year
+      'name': this.companyList[companyIndex].name,
+      'headquarters': this.companyList[companyIndex].headquarters,
+      'address': this.companyList[companyIndex].address,
+      'company_website': this.companyList[companyIndex].company_website,
+      'established_year': this.companyList[companyIndex].established_year
     })
     this.displayForm = true;
     this.showCompanies = false;
@@ -127,14 +126,14 @@ export class NewCompanyComponent implements OnInit {
   updateCompany(companyIndex: number) {
     this.http.patch(this.apiBaseURL + 'new-company',
         {
-          companyId: this.response[companyIndex].id,
+          companyId: this.companyList[companyIndex].id,
           companyForm: JSON.stringify(this.newCompanyForm.value)
         })
         .subscribe(
           response => {
-            Object.keys(this.response[companyIndex]).forEach(
+            Object.keys(this.companyList[companyIndex]).forEach(
               item => {
-                this.response[companyIndex][item] = this.newCompanyForm.value[item];
+                this.companyList[companyIndex][item] = this.newCompanyForm.value[item];
               }
             );
             this.companyAdded();
@@ -144,5 +143,20 @@ export class NewCompanyComponent implements OnInit {
           }
         )
   }
+
+  deleteCompany(companyIndex: number) {
+    this.http.delete(this.apiBaseURL + 'new-company/' +
+                      this.companyList[companyIndex].id.toString() +
+                      '/').subscribe(
+      response => {
+        this.companyList.splice(companyIndex, 1);
+        this.expandCompany = -1;
+      },
+      errors => {
+        console.log(errors);
+      }
+    );
+  }
+
 
 }

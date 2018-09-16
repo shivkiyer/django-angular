@@ -3,8 +3,7 @@
   <button type="button"
           class="btn btn-primary"
           *ngIf="!showCompanies"
-          (click)="displayCompanies()"
-          [disabled]="!areCompanies">
+          (click)="displayCompanies()">
           Show Companies
   </button>
 
@@ -23,10 +22,11 @@
     <div *ngIf="areCompanies">
 
       <ol>
-        <div *ngFor="let companyItem of response; let companyIndex=index">
+        <div *ngFor="let companyItem of companyList; let companyIndex=index">
           <li>
 
-            <span (click)="chooseCompany(companyIndex)">
+            <span (click)="chooseCompany(companyIndex)"
+                  class="show-pointer">
               {{ companyItem.name }}
             </span> <br>
             {{ companyItem.headquarters }} <br>

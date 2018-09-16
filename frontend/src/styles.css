@@ -11,3 +11,14 @@
 .left-space-6 {
   margin-left: 6px;
 }
+
+.show-pointer {
+  cursor: pointer;
+}
+
+.show-pointer:hover {
+  background-color: rgb(237, 237, 237);
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 5px;
+}

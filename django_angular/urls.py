@@ -22,6 +22,7 @@ from my_app import views
 urlpatterns = [
     re_path(r'^$', serve, kwargs={'path': 'index.html'}, name="index"),
     path('admin/', admin.site.urls),
+    path('api/new-company/<int:id>/', views.NewCompany.as_view(), name='delete_company'),
     re_path(r'^api/new-company$', views.NewCompany.as_view(), name='new_company'),
 
     # Serving static JS files in Angular

@@ -19,7 +19,7 @@ except:
     sys.exit(1)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ANGULAR_APP_DIR = os.path.join(os.path.join(BASE_DIR, 'frontend'), 'dist')
 
 # Quick-start development settings - unsuitable for production
@@ -28,8 +28,8 @@ ANGULAR_APP_DIR = os.path.join(os.path.join(BASE_DIR, 'frontend'), 'dist')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = PROJ_SECRET_KEY
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -60,11 +60,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_WHITELIST = (
-#     'http://localhost:4200',
-# )
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'django_angular.urls'
 
