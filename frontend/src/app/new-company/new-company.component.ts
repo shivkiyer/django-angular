@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { CookieService } from 'ngx-cookie-service';
 
 import { environment } from './../../environments/environment';
 
@@ -40,7 +41,12 @@ export class NewCompanyComponent implements OnInit {
   blankForm: boolean = true;
   updateCompanyIndex: number = -1;
 
-  constructor(private http: Http) { }
+  csrfToken: string = '';
+
+  constructor(
+    private http: Http,
+    private cookieService: CookieService
+  ) { }
 
   fetchCompanyList() {
     return this.http.get(this.apiBaseURL + 'new-company',
@@ -61,8 +67,9 @@ export class NewCompanyComponent implements OnInit {
   displayCompanies() {
     this.fetchCompanyList().subscribe(
       (response) => {
+        this.csrfToken = this.cookieService.get('csrftoken');
+        console.log(this.csrfToken);
         this.companyList = response.json().companies;
-        console.log(this.companyList);
         if (this.companyList.length>0) {
           this.areCompanies = true;
           this.showCompanies = true;
@@ -88,9 +95,13 @@ export class NewCompanyComponent implements OnInit {
   }
 
   addCompany() {
-    console.log(this.newCompanyForm.value);
-    this.http.post(this.apiBaseURL + 'new-company',
-              JSON.stringify(this.newCompanyForm.value)).subscribe(
+    // The header with the CSRF token is essential
+    let csrfHeader = new Headers({'X-Csrftoken': this.csrfToken});
+    // Not setting the cookie does not seem to make a difference.
+    // this.cookieService.set('csrftoken', this.csrfToken);
+    this.http.post(this.apiBaseURL + 'new-company/',
+              JSON.stringify(this.newCompanyForm.value),
+              {headers: csrfHeader}).subscribe(
       response => {
         this.companyList.push(this.newCompanyForm.value);
         this.companyAdded();
@@ -124,10 +135,17 @@ export class NewCompanyComponent implements OnInit {
   }
 
   updateCompany(companyIndex: number) {
-    this.http.patch(this.apiBaseURL + 'new-company',
+    // The header with the CSRF token is essential
+    let csrfHeader = new Headers({'X-Csrftoken': this.csrfToken});
+    // Not setting the cookie does not seem to make a difference.
+    // this.cookieService.set('csrftoken', this.csrfToken);
+    this.http.patch(this.apiBaseURL + 'new-company/',
         {
           companyId: this.companyList[companyIndex].id,
           companyForm: JSON.stringify(this.newCompanyForm.value)
+        },
+        {
+          headers: csrfHeader
         })
         .subscribe(
           response => {
@@ -145,9 +163,16 @@ export class NewCompanyComponent implements OnInit {
   }
 
   deleteCompany(companyIndex: number) {
+    // The header with the CSRF token is essential
+    let csrfHeader = new Headers({'X-Csrftoken': this.csrfToken});
+    // Not setting the cookie does not seem to make a difference.
+    // this.cookieService.set('csrftoken', this.csrfToken);
     this.http.delete(this.apiBaseURL + 'new-company/' +
                       this.companyList[companyIndex].id.toString() +
-                      '/').subscribe(
+                      '/',
+                      {
+                        headers: csrfHeader
+                      }).subscribe(
       response => {
         this.companyList.splice(companyIndex, 1);
         this.expandCompany = -1;

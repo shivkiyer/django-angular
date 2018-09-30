@@ -3,7 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.forms.models import model_to_dict
 from django.views import View
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import get_token
 import json
 
 from .forms import CompanyForm, EmployeeForm
@@ -15,6 +15,7 @@ from .serializers import CompanySerializer
 class NewCompany(View):
     company_list = []
     def get(self, request, *args, **kwargs):
+        get_token(request)
         self.company_list = CompanySerializer(Company.objects.all(), many=True)
         return JsonResponse({
             "companies": self.company_list.data

@@ -2,7 +2,7 @@
 import os
 import sys
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_angular.settings.base")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_angular.settings.production")
     # This changes the port of the dev server
     from django.core.management.commands.runserver import Command as runserver
     runserver.default_port = "8080"

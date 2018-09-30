@@ -20,16 +20,13 @@ except:
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-ANGULAR_APP_DIR = os.path.join(os.path.join(BASE_DIR, 'frontend'), 'dist')
+ANGULAR_APP_DIR = os.path.join(os.path.join(BASE_DIR, 'frontend'), 'dist/')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = PROJ_SECRET_KEY
-
-# # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -60,8 +57,19 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# CSRF_USE_SESSIONS = True
+#
 # CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ALLOW_CREDENTIALS = True
+#
+# CORS_ALLOW_HEADERS = (
+#     'content-type',
+#     'HTTP_X_CSRFTOKEN'
+# )
+#
+# CORS_EXPOSE_HEADERS = [
+#     'content-type',
+#     'HTTP_X_CSRFTOKEN']
 
 ROOT_URLCONF = 'django_angular.urls'
 
@@ -134,5 +142,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(ANGULAR_APP_DIR),
+    ANGULAR_APP_DIR,
 ]
