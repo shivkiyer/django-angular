@@ -49,7 +49,7 @@ export class NewCompanyComponent implements OnInit {
   ) { }
 
   fetchCompanyList() {
-    return this.http.get(this.apiBaseURL + 'new-company',
+    return this.http.get(this.apiBaseURL + 'new-company/',
         {
           withCredentials: true
         }

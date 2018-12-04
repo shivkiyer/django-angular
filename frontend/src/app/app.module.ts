@@ -21,7 +21,9 @@ import { NewCompanyComponent } from './new-company/new-company.component';
     ReactiveFormsModule,
     AppRoutingModule
   ],
-  providers: [CookieService],
+  providers: [
+    CookieService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
