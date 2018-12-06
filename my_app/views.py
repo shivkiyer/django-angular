@@ -17,6 +17,9 @@ class NewCompany(View):
     company_list = []
     def get(self, request, *args, **kwargs):
         get_token(request)
+        # Checking the CSRF token that is added to the response object.
+        # print(dir(request))
+        # print(request.COOKIES)
         self.company_list = CompanySerializer(Company.objects.all(), many=True)
         return JsonResponse({
             "companies": self.company_list.data
@@ -36,8 +39,6 @@ class NewCompany(View):
         # The JSONParser produces the same effect as below with cleaner code
         # And no need for a second JSON parsing or json.loads
         changed_company_data = JSONParser().parse(request)
-        print()
-        print(changed_company_data)
         changed_company = Company.objects.get(id=int(changed_company_data['companyId']))
         # JSON parser parses content in request data.
         # For further processing, using json.loads below.
