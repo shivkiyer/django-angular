@@ -5,6 +5,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.middleware.csrf import get_token
 import json
+from rest_framework.parsers import JSONParser
 
 from .forms import CompanyForm, EmployeeForm
 from .models import Company, Employee
@@ -22,7 +23,9 @@ class NewCompany(View):
         })
 
     def post(self, request, *args, **kwargs):
-        new_company_data = json.loads(request.body.decode('utf-8'))
+        # The JSONParser produces the same effect as below with cleaner code
+        #new_company_data = json.loads(request.body.decode('utf-8'))
+        new_company_data = JSONParser().parse(request)
         new_company = Company(**new_company_data)
         new_company.save()
         return JsonResponse({
@@ -30,8 +33,14 @@ class NewCompany(View):
         })
 
     def patch(self, request, *args, **kwargs):
-        changed_company_data = json.loads(request.body.decode('utf-8'))
+        # The JSONParser produces the same effect as below with cleaner code
+        # And no need for a second JSON parsing or json.loads
+        changed_company_data = JSONParser().parse(request)
+        print()
+        print(changed_company_data)
         changed_company = Company.objects.get(id=int(changed_company_data['companyId']))
+        # JSON parser parses content in request data.
+        # For further processing, using json.loads below.
         changed_company_form = json.loads(changed_company_data['companyForm'])
         for company_attr, company_val in changed_company_form.items():
             setattr(changed_company, company_attr, company_val)
