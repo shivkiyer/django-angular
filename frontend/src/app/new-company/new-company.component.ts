@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Http, Headers } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
 
@@ -44,7 +44,7 @@ export class NewCompanyComponent implements OnInit {
   csrfToken: string = '';
 
   constructor(
-    private http: Http,
+    private http: HttpClient,
     private cookieService: CookieService
   ) { }
 
@@ -69,7 +69,7 @@ export class NewCompanyComponent implements OnInit {
       (response) => {
         this.csrfToken = this.cookieService.get('csrftoken');
         console.log(this.csrfToken);
-        this.companyList = response.json().companies;
+        this.companyList = response.companies;
         if (this.companyList.length>0) {
           this.areCompanies = true;
           this.showCompanies = true;
@@ -96,7 +96,7 @@ export class NewCompanyComponent implements OnInit {
 
   addCompany() {
     // The header with the CSRF token is essential
-    let csrfHeader = new Headers({'X-Csrftoken': this.csrfToken});
+    let csrfHeader = new HttpHeaders({'X-Csrftoken': this.csrfToken});
     // Not setting the cookie does not seem to make a difference.
     // this.cookieService.set('csrftoken', this.csrfToken);
     this.http.post(this.apiBaseURL + 'new-company/',
@@ -136,7 +136,7 @@ export class NewCompanyComponent implements OnInit {
 
   updateCompany(companyIndex: number) {
     // The header with the CSRF token is essential
-    let csrfHeader = new Headers({'X-Csrftoken': this.csrfToken});
+    let csrfHeader = new HttpHeaders({'X-Csrftoken': this.csrfToken});
     // Not setting the cookie does not seem to make a difference.
     // this.cookieService.set('csrftoken', this.csrfToken);
     this.http.patch(this.apiBaseURL + 'new-company/',
@@ -164,7 +164,7 @@ export class NewCompanyComponent implements OnInit {
 
   deleteCompany(companyIndex: number) {
     // The header with the CSRF token is essential
-    let csrfHeader = new Headers({'X-Csrftoken': this.csrfToken});
+    let csrfHeader = new HttpHeaders({'X-Csrftoken': this.csrfToken});
     // Not setting the cookie does not seem to make a difference.
     // this.cookieService.set('csrftoken', this.csrfToken);
     this.http.delete(this.apiBaseURL + 'new-company/' +
