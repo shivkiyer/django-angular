@@ -35,11 +35,15 @@ class NewCompany(APIView):
     def post(self, request, *args, **kwargs):
         # The JSONParser produces the same effect as below with cleaner code
         #new_company_data = json.loads(request.body.decode('utf-8'))
-        new_company_data = JSONParser().parse(request)
-        new_company = Company(**new_company_data)
-        new_company.save()
+        company_serializer = CompanySerializer(data=request.data)
+        if company_serializer.is_valid():
+            company_serializer.save()
+        # print(company_serializer)
+        # new_company_data = JSONParser().parse(request)
+        # new_company = Company(**new_company_data)
+        # new_company.save()
         return Response({
-            "company": model_to_dict(new_company)
+            "company": company_serializer.data
         })
         # return JsonResponse({
         #     "company": model_to_dict(new_company)

@@ -68,8 +68,7 @@ export class NewCompanyComponent implements OnInit {
     this.fetchCompanyList().subscribe(
       (response) => {
         this.csrfToken = this.cookieService.get('csrftoken');
-        console.log(this.csrfToken);
-        this.companyList = response.companies;
+        this.companyList = response['companies'];
         if (this.companyList.length>0) {
           this.areCompanies = true;
           this.showCompanies = true;
@@ -96,12 +95,17 @@ export class NewCompanyComponent implements OnInit {
 
   addCompany() {
     // The header with the CSRF token is essential
-    let csrfHeader = new HttpHeaders({'X-Csrftoken': this.csrfToken});
+    let headers = new HttpHeaders(
+      {
+        'X-Csrftoken': this.csrfToken,
+        'Content-Type': 'application/json'
+      }
+    );
     // Not setting the cookie does not seem to make a difference.
     // this.cookieService.set('csrftoken', this.csrfToken);
     this.http.post(this.apiBaseURL + 'new-company/',
-              JSON.stringify(this.newCompanyForm.value),
-              {headers: csrfHeader}).subscribe(
+              this.newCompanyForm.value,
+              {headers: headers}).subscribe(
       response => {
         this.companyList.push(this.newCompanyForm.value);
         this.companyAdded();
