@@ -57,20 +57,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CSRF_USE_SESSIONS = True
-#
-# CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ALLOW_CREDENTIALS = True
-#
-# CORS_ALLOW_HEADERS = (
-#     'content-type',
-#     'HTTP_X_CSRFTOKEN'
-# )
-#
-# CORS_EXPOSE_HEADERS = [
-#     'content-type',
-#     'HTTP_X_CSRFTOKEN']
-
 ROOT_URLCONF = 'django_angular.urls'
 
 TEMPLATES = [

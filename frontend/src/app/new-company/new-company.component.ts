@@ -13,9 +13,7 @@ export class NewCompanyComponent implements OnInit {
   earliestYear: number = 1900;
   latestYear: number = 2018;
 
-  companyList = [];
-  showCompanies: boolean = false;
-  areCompanies: boolean = false;
+  // Form elements
   name: FormControl = new FormControl(null, Validators.required);
   headquarters: FormControl = new FormControl(null, Validators.required);
   address: FormControl = new FormControl(null, Validators.required);
@@ -34,6 +32,10 @@ export class NewCompanyComponent implements OnInit {
     'company_website': this.company_website,
     'established_year': this.established_year
   });
+
+  companyList = [];
+  showCompanies: boolean = false;
+  areCompanies: boolean = false;
   displayForm: boolean = false;
   expandCompany: number = -1;
   blankForm: boolean = true;

@@ -49,7 +49,7 @@ export class CompanyService {
 
   updateCompany(companyId:any, companyForm:any): Observable<any> {
     // The header with the CSRF token is essential
-    let csrfHeader = new HttpHeaders(
+    let headers = new HttpHeaders(
       {
         'X-Csrftoken': this.csrfToken,
         'Content-Type': 'application/json'
@@ -63,7 +63,7 @@ export class CompanyService {
           companyForm: companyForm.value
         },
         {
-          headers: csrfHeader
+          headers: headers
         });
   }
 

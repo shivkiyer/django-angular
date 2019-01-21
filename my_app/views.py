@@ -27,27 +27,17 @@ class NewCompany(APIView):
         return Response({
             "companies": self.company_list.data
         })
-        #Getting rid of JsonResponse in favour of Response from DRF.
-        # return JsonResponse({
-        #     "companies": self.company_list.data
-        # })
 
     def post(self, request, *args, **kwargs):
         # The JSONParser produces the same effect as below with cleaner code
         #new_company_data = json.loads(request.body.decode('utf-8'))
-        company_serializer = CompanySerializer(data=request.data)
+        new_company_data = JSONParser().parse(request)
+        company_serializer = CompanySerializer(data=new_company_data)
         if company_serializer.is_valid():
             company_serializer.save()
-        # print(company_serializer)
-        # new_company_data = JSONParser().parse(request)
-        # new_company = Company(**new_company_data)
-        # new_company.save()
         return Response({
             "company": company_serializer.data
         })
-        # return JsonResponse({
-        #     "company": model_to_dict(new_company)
-        # })
 
     def patch(self, request, *args, **kwargs):
         # The JSONParser produces the same effect as below with cleaner code
@@ -55,11 +45,6 @@ class NewCompany(APIView):
         changed_company_data = JSONParser().parse(request)
         print(changed_company_data)
         changed_company = Company.objects.get(id=int(changed_company_data['companyId']))
-        # JSON parser parses content in request data.
-        # For further processing, using json.loads below.
-        # changed_company_form = json.loads(changed_company_data['companyForm'])
-        # for company_attr, company_val in changed_company_form.items():
-        #     setattr(changed_company, company_attr, company_val)
         changed_company_serializer = CompanySerializer(
                         changed_company,
                         data=changed_company_data['companyForm']
@@ -69,9 +54,6 @@ class NewCompany(APIView):
         return Response({
             "company": changed_company_serializer.data
         })
-        # return JsonResponse({
-        #     "company": model_to_dict(changed_company)
-        # })
 
     def delete(self, request, *args, **kwargs):
         if 'id' in kwargs:
@@ -82,6 +64,3 @@ class NewCompany(APIView):
         return Response({
             "company": company_deleted_serialized.data
         })
-        # return JsonResponse({
-        #     "company": company_deleted
-        # })
