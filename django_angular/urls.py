@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/new-company/<int:id>/', views.NewCompany.as_view(), name='delete_company'),
     re_path(r'^api/new-company/$', views.NewCompany.as_view(), name='new_company'),
+    path('api/user/', views.NewUser.as_view(), name='new_user'),
 
     # Serving static JS files in Angular
     re_path(r'^(?!/?static/)(?!/?media/)(?P<path>.*\..*)$', \

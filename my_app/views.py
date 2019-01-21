@@ -9,8 +9,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.contrib.auth.models import User
 
-from .forms import CompanyForm, EmployeeForm
 from .models import Company, Employee
 from .serializers import CompanySerializer
 
@@ -63,4 +63,16 @@ class NewCompany(APIView):
         delete_company.delete()
         return Response({
             "company": company_deleted_serialized.data
+        })
+
+
+class NewUser(APIView):
+    def post(self, request, *args, **kwargs):
+        new_user_data = JSONParser().parse(request)
+        new_user = User(username=new_user_data["username"])
+        new_user.set_password(new_user_data["password"])
+        new_user.save()
+        list_of_all_users = User.objects.all()
+        return Response({
+            "user": model_to_dict(new_user)
         })

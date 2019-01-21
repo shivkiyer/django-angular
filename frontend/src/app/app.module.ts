@@ -8,14 +8,17 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { NewCompanyComponent } from './new-company/new-company.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 import { CompanyService } from './services/company.service';
+import { UserService } from './services/user.service';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    NewCompanyComponent
+    NewCompanyComponent,
+    HomePageComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +28,8 @@ import { CompanyService } from './services/company.service';
   ],
   providers: [
     CookieService,
-    CompanyService
+    CompanyService,
+    UserService
   ],
   bootstrap: [AppComponent]
 })

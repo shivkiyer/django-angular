@@ -6,6 +6,8 @@ import { map } from 'rxjs/operators';
 
 import { environment } from './../../environments/environment';
 
+import { CookieManager } from './cookie-manager.service';
+
 @Injectable()
 export class CompanyService {
 
@@ -15,7 +17,7 @@ export class CompanyService {
   ) {}
 
   apiBaseURL = environment.configSettings.apiURL;
-  csrfToken = '';
+  csrfToken: string;
 
   fetchCompanyList(): Observable<any> {
     return this.http.get(this.apiBaseURL + 'new-company/',
@@ -26,6 +28,10 @@ export class CompanyService {
         map(
           (response) => {
             this.csrfToken = this.cookieService.get('csrftoken');
+            if (!CookieManager.csrfToken) {
+              CookieManager.csrfToken = this.cookieService.get('csrftoken');
+              this.csrfToken = CookieManager.csrfToken;
+            }
             return response;
           }
       ));
