@@ -9,6 +9,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NewCompanyComponent } from './new-company/new-company.component';
 
+import { CompanyService } from './services/company.service';
+
 
 @NgModule({
   declarations: [
@@ -22,7 +24,8 @@ import { NewCompanyComponent } from './new-company/new-company.component';
     AppRoutingModule
   ],
   providers: [
-    CookieService
+    CookieService,
+    CompanyService
   ],
   bootstrap: [AppComponent]
 })

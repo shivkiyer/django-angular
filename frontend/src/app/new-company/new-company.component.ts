@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { CookieService } from 'ngx-cookie-service';
 
 import { environment } from './../../environments/environment';
+import { CompanyService } from './../services/company.service';
 
 @Component({
   selector: 'app-new-company',
@@ -14,8 +13,7 @@ export class NewCompanyComponent implements OnInit {
   earliestYear: number = 1900;
   latestYear: number = 2018;
 
-  apiBaseURL: string = environment.configSettings.apiURL;
-  companyList: any;
+  companyList = [];
   showCompanies: boolean = false;
   areCompanies: boolean = false;
   name: FormControl = new FormControl(null, Validators.required);
@@ -41,22 +39,13 @@ export class NewCompanyComponent implements OnInit {
   blankForm: boolean = true;
   updateCompanyIndex: number = -1;
 
-  csrfToken: string = '';
 
   constructor(
-    private http: HttpClient,
-    private cookieService: CookieService
-  ) { }
-
-  fetchCompanyList() {
-    return this.http.get(this.apiBaseURL + 'new-company/',
-        {
-          withCredentials: true
-        }
-      );
-  }
+    private companyService: CompanyService
+  ) {}
 
   ngOnInit() {}
+
 
   emptyForm() {
     this.displayForm = true;
@@ -64,10 +53,10 @@ export class NewCompanyComponent implements OnInit {
     this.blankForm = true;
   }
 
+
   displayCompanies() {
-    this.fetchCompanyList().subscribe(
+    this.companyService.fetchCompanyList().subscribe(
       (response) => {
-        this.csrfToken = this.cookieService.get('csrftoken');
         this.companyList = response['companies'];
         if (this.companyList.length>0) {
           this.areCompanies = true;
@@ -81,9 +70,11 @@ export class NewCompanyComponent implements OnInit {
     );
   }
 
+
   hideCompanies() {
     this.showCompanies = false;
   }
+
 
   companyAdded() {
     this.newCompanyForm.reset();
@@ -93,28 +84,20 @@ export class NewCompanyComponent implements OnInit {
     }
   }
 
+
   addCompany() {
-    // The header with the CSRF token is essential
-    let headers = new HttpHeaders(
-      {
-        'X-Csrftoken': this.csrfToken,
-        'Content-Type': 'application/json'
-      }
-    );
-    // Not setting the cookie does not seem to make a difference.
-    // this.cookieService.set('csrftoken', this.csrfToken);
-    this.http.post(this.apiBaseURL + 'new-company/',
-              this.newCompanyForm.value,
-              {headers: headers}).subscribe(
-      response => {
-        this.companyList.push(this.newCompanyForm.value);
-        this.companyAdded();
-      },
-      errors => {
-        console.log(errors);
-      }
-    );
+    this.companyService.addCompany(this.newCompanyForm)
+      .subscribe(
+          response => {
+            this.companyList.push(this.newCompanyForm.value);
+            this.companyAdded();
+          },
+          errors => {
+            console.log(errors);
+          }
+        );
   }
+
 
   chooseCompany(companyIndex: number) {
     if (companyIndex===this.expandCompany) {
@@ -123,6 +106,7 @@ export class NewCompanyComponent implements OnInit {
       this.expandCompany = companyIndex;
     }
   }
+
 
   modifyCompany(companyIndex: number) {
     this.newCompanyForm.setValue({
@@ -138,20 +122,12 @@ export class NewCompanyComponent implements OnInit {
     this.updateCompanyIndex = companyIndex;
   }
 
+
   updateCompany(companyIndex: number) {
-    // The header with the CSRF token is essential
-    let csrfHeader = new HttpHeaders({'X-Csrftoken': this.csrfToken});
-    // Not setting the cookie does not seem to make a difference.
-    // this.cookieService.set('csrftoken', this.csrfToken);
-    this.http.patch(this.apiBaseURL + 'new-company/',
-        {
-          companyId: this.companyList[companyIndex].id,
-          companyForm: JSON.stringify(this.newCompanyForm.value)
-        },
-        {
-          headers: csrfHeader
-        })
-        .subscribe(
+    this.companyService.updateCompany(
+          this.companyList[companyIndex].id,
+          this.newCompanyForm
+        ).subscribe(
           response => {
             Object.keys(this.companyList[companyIndex]).forEach(
               item => {
@@ -163,20 +139,14 @@ export class NewCompanyComponent implements OnInit {
           errors => {
             console.log(errors);
           }
-        )
+        );
   }
 
+
   deleteCompany(companyIndex: number) {
-    // The header with the CSRF token is essential
-    let csrfHeader = new HttpHeaders({'X-Csrftoken': this.csrfToken});
-    // Not setting the cookie does not seem to make a difference.
-    // this.cookieService.set('csrftoken', this.csrfToken);
-    this.http.delete(this.apiBaseURL + 'new-company/' +
-                      this.companyList[companyIndex].id.toString() +
-                      '/',
-                      {
-                        headers: csrfHeader
-                      }).subscribe(
+    this.companyService.deleteCompany(
+        this.companyList[companyIndex].id.toString()
+      ).subscribe(
       response => {
         this.companyList.splice(companyIndex, 1);
         this.expandCompany = -1;

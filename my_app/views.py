@@ -53,15 +53,21 @@ class NewCompany(APIView):
         # The JSONParser produces the same effect as below with cleaner code
         # And no need for a second JSON parsing or json.loads
         changed_company_data = JSONParser().parse(request)
+        print(changed_company_data)
         changed_company = Company.objects.get(id=int(changed_company_data['companyId']))
         # JSON parser parses content in request data.
         # For further processing, using json.loads below.
-        changed_company_form = json.loads(changed_company_data['companyForm'])
-        for company_attr, company_val in changed_company_form.items():
-            setattr(changed_company, company_attr, company_val)
-        changed_company.save()
+        # changed_company_form = json.loads(changed_company_data['companyForm'])
+        # for company_attr, company_val in changed_company_form.items():
+        #     setattr(changed_company, company_attr, company_val)
+        changed_company_serializer = CompanySerializer(
+                        changed_company,
+                        data=changed_company_data['companyForm']
+                    )
+        if changed_company_serializer.is_valid():
+            changed_company_serializer.save()
         return Response({
-            "company": model_to_dict(changed_company)
+            "company": changed_company_serializer.data
         })
         # return JsonResponse({
         #     "company": model_to_dict(changed_company)
@@ -71,10 +77,10 @@ class NewCompany(APIView):
         if 'id' in kwargs:
             company_id = kwargs['id']
         delete_company = Company.objects.get(id=int(company_id))
-        company_deleted = model_to_dict(delete_company)
+        company_deleted_serialized = CompanySerializer(delete_company)
         delete_company.delete()
         return Response({
-            "company": company_deleted
+            "company": company_deleted_serialized.data
         })
         # return JsonResponse({
         #     "company": company_deleted
