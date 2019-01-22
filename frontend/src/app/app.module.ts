@@ -9,6 +9,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NewCompanyComponent } from './new-company/new-company.component';
 import { HomePageComponent } from './home-page/home-page.component';
+import { RegisterBoxComponent } from './register-box/register-box.component';
+import { LoginBoxComponent } from './login-box/login-box.component';
 
 import { CompanyService } from './services/company.service';
 import { UserService } from './services/user.service';
@@ -18,7 +20,9 @@ import { UserService } from './services/user.service';
   declarations: [
     AppComponent,
     NewCompanyComponent,
-    HomePageComponent
+    HomePageComponent,
+    RegisterBoxComponent,
+    LoginBoxComponent
   ],
   imports: [
     BrowserModule,

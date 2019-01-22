@@ -1,3 +1,3 @@
 export const CookieManager = {
-  csrfToken: '';
+  csrfToken: ''
 }

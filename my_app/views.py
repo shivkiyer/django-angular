@@ -5,11 +5,16 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.middleware.csrf import get_token
 import json
+
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+from rest_framework import status
+
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 from .models import Company, Employee
 from .serializers import CompanySerializer
@@ -76,3 +81,18 @@ class NewUser(APIView):
         return Response({
             "user": model_to_dict(new_user)
         })
+
+
+@api_view(['POST'])
+def user_login(request):
+    login_data = JSONParser().parse(request)
+    user_account = authenticate(username=login_data["username"], password=login_data["password"])
+    if user_account is not None:
+        return Response({
+            'message': 'received'
+        })
+    else:
+        return Response({
+            'error': "Unauthorized"
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    print(dir(user_account))

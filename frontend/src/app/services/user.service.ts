@@ -27,7 +27,20 @@ export class UserService {
     return this.http.post(
       this.apiBaseURL + 'user/',
       userInfo.value,
-      headers: headers
+      {headers: headers}
+    );
+  }
+
+  loginUser(userInfo: any) {
+    this.csrfToken = CookieManager.csrfToken;
+    let headers = new HttpHeaders({
+      'X-Csrftoken': this.csrfToken,
+      'Content-Type': 'application/json'
+    });
+    return this.http.post(
+      this.apiBaseURL + 'user/login/',
+      userInfo.value,
+      {headers: headers}
     );
   }
 }
