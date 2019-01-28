@@ -29,6 +29,8 @@ class NewCompany(APIView):
         # print(dir(request))
         # print(request.COOKIES)
         self.company_list = CompanySerializer(Company.objects.all(), many=True)
+        print(dir(request))
+        print(request.user)
         return Response({
             "companies": self.company_list.data
         })
@@ -87,6 +89,7 @@ class NewUser(APIView):
 def user_login(request):
     login_data = JSONParser().parse(request)
     user_account = authenticate(username=login_data["username"], password=login_data["password"])
+    print(user_account)
     if user_account is not None:
         return Response({
             'message': 'received'
@@ -95,4 +98,3 @@ def user_login(request):
         return Response({
             'error': "Unauthorized"
         }, status=status.HTTP_401_UNAUTHORIZED)
-    print(dir(user_account))

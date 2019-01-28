@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { UserService } from './../services/user.service';
 
@@ -10,7 +11,8 @@ import { UserService } from './../services/user.service';
 export class LoginBoxComponent {
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {}
 
   userLoginForm = new FormGroup({
@@ -21,7 +23,10 @@ export class LoginBoxComponent {
   loginUser() {
     console.log(this.userLoginForm.value);
     this.userService.loginUser(this.userLoginForm).subscribe(
-      response => console.log(response),
+      response => {
+        console.log(response);
+        this.router.navigate(['/new-company/']);
+      },
       errors => console.log(errors)
     );
   }
