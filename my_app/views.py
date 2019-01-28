@@ -14,7 +14,7 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 
 from .models import Company, Employee
 from .serializers import CompanySerializer
@@ -91,6 +91,7 @@ def user_login(request):
     user_account = authenticate(username=login_data["username"], password=login_data["password"])
     print(user_account)
     if user_account is not None:
+        login(request, user_account)
         return Response({
             'message': 'received'
         })
