@@ -18,6 +18,17 @@ class Company(models.Model):
         return str(self.name) + " in " + str(self.headquarters)
 
 
+class UserToken(models.Model):
+    username = models.CharField(max_length=100)
+    jwt_token = models.CharField(max_length=500, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.username)
+
+    def __unicode__(self):
+        return str(self.username)
+
+
 class Employee(models.Model):
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100)

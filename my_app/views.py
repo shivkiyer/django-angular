@@ -16,21 +16,23 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 
-from .models import Company, Employee
-from .serializers import CompanySerializer
+import jwt
+
+from .models import Company, Employee, UserToken
+from .serializers import CompanySerializer, UserTokenSerializer
+
+from django_angular.settings.base import JWT_SECRET
 
 # Create your views here.
 
 class NewCompany(APIView):
     company_list = []
     def get(self, request, *args, **kwargs):
-        get_token(request)
+        # get_token(request)
         # Checking the CSRF token that is added to the response object.
         # print(dir(request))
-        # print(request.COOKIES)
+        print(request.COOKIES)
         self.company_list = CompanySerializer(Company.objects.all(), many=True)
-        print(dir(request))
-        print(request.user)
         return Response({
             "companies": self.company_list.data
         })
@@ -89,11 +91,23 @@ class NewUser(APIView):
 def user_login(request):
     login_data = JSONParser().parse(request)
     user_account = authenticate(username=login_data["username"], password=login_data["password"])
-    print(user_account)
     if user_account is not None:
-        login(request, user_account)
+        user_token_object = UserToken()
+        user_token_object.username = user_account.username
+        user_token_object.save()
+        user_jwt_token = jwt.encode(
+            {
+                'id': user_token_object.id,
+                'username': user_account.username
+            },
+            JWT_SECRET
+        )
+        user_token_object.jwt_token = user_jwt_token
+        user_token_object.save()
         return Response({
-            'message': 'received'
+            'user': user_account.username
+        }, headers={
+            'someheader': user_jwt_token
         })
     else:
         return Response({

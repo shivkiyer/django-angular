@@ -4,3 +4,6 @@
 
 # SECRET_KEY
 PROJ_SECRET_KEY = some_key
+
+# JWT_SECRET
+JWT_SECRET = some_key

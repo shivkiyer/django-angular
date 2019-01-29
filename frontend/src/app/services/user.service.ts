@@ -40,7 +40,10 @@ export class UserService {
     return this.http.post(
       this.apiBaseURL + 'user/login/',
       userInfo.value,
-      {headers: headers}
+      {
+        headers: headers,
+        observe: 'response'
+      },
     );
   }
 }
