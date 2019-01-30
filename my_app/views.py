@@ -4,6 +4,7 @@ from django.forms.models import model_to_dict
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.middleware.csrf import get_token
+from django.views.decorators.csrf import csrf_protect
 import json
 
 from rest_framework.parsers import JSONParser
@@ -21,14 +22,21 @@ import jwt
 from .models import Company, Employee, UserToken
 from .serializers import CompanySerializer, UserTokenSerializer
 
-from django_angular.settings.base import JWT_SECRET
+from django.conf import settings
+
+if not settings.DEBUG:
+    CSRF_STATUS = True
+else:
+    CSRF_STATUS = False
 
 # Create your views here.
-
+@method_decorator(csrf_protect, name='secure_create_company')
+@method_decorator(csrf_protect, name='secure_modify_company')
+@method_decorator(csrf_protect, name='secure_delete_company')
 class NewCompany(APIView):
     company_list = []
     def get(self, request, *args, **kwargs):
-        # get_token(request)
+        get_token(request)
         # Checking the CSRF token that is added to the response object.
         # print(dir(request))
         print(request.COOKIES)
@@ -37,9 +45,7 @@ class NewCompany(APIView):
             "companies": self.company_list.data
         })
 
-    def post(self, request, *args, **kwargs):
-        # The JSONParser produces the same effect as below with cleaner code
-        #new_company_data = json.loads(request.body.decode('utf-8'))
+    def create_company(self, request, *args, **kwargs):
         new_company_data = JSONParser().parse(request)
         company_serializer = CompanySerializer(data=new_company_data)
         if company_serializer.is_valid():
@@ -48,11 +54,22 @@ class NewCompany(APIView):
             "company": company_serializer.data
         })
 
-    def patch(self, request, *args, **kwargs):
+
+    def secure_create_company(self, request, *args, **kwargs):
+        return self.create_company(request, *args, **kwargs)
+
+
+    def post(self, request, *args, **kwargs):
         # The JSONParser produces the same effect as below with cleaner code
-        # And no need for a second JSON parsing or json.loads
+        #new_company_data = json.loads(request.body.decode('utf-8'))
+        if CSRF_STATUS:
+            return self.secure_create_company(request, *args, **kwargs)
+        else:
+            return self.create_company(request, *args, **kwargs)
+
+
+    def modify_company(self, request, *args, **kwargs):
         changed_company_data = JSONParser().parse(request)
-        print(changed_company_data)
         changed_company = Company.objects.get(id=int(changed_company_data['companyId']))
         changed_company_serializer = CompanySerializer(
                         changed_company,
@@ -64,7 +81,21 @@ class NewCompany(APIView):
             "company": changed_company_serializer.data
         })
 
-    def delete(self, request, *args, **kwargs):
+
+    def secure_modify_company(self, request, *args, **kwargs):
+        return self.modify_company(request, *args, **kwargs)
+
+
+    def patch(self, request, *args, **kwargs):
+        # The JSONParser produces the same effect as below with cleaner code
+        # And no need for a second JSON parsing or json.loads
+        if CSRF_STATUS:
+            return self.secure_modify_company(request, *args, **kwargs)
+        else:
+            return self.modify_company(request, *args, **kwargs)
+
+
+    def delete_company(self, request, *args, **kwargs):
         if 'id' in kwargs:
             company_id = kwargs['id']
         delete_company = Company.objects.get(id=int(company_id))
@@ -73,6 +104,15 @@ class NewCompany(APIView):
         return Response({
             "company": company_deleted_serialized.data
         })
+
+    def secure_delete_company(self, request, *args, **kwargs):
+        return self.delete_company(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        if CSRF_STATUS:
+            return self.secure_delete_company(request, *args, **kwargs)
+        else:
+            return self.delete_company(request, *args, **kwargs)
 
 
 class NewUser(APIView):
@@ -100,14 +140,14 @@ def user_login(request):
                 'id': user_token_object.id,
                 'username': user_account.username
             },
-            JWT_SECRET
+            settings.JWT_SECRET
         )
         user_token_object.jwt_token = user_jwt_token
         user_token_object.save()
         return Response({
             'user': user_account.username
         }, headers={
-            'someheader': user_jwt_token
+            'Authorization': user_jwt_token
         })
     else:
         return Response({

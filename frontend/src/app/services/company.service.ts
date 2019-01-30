@@ -17,7 +17,7 @@ export class CompanyService {
   ) {}
 
   apiBaseURL = environment.configSettings.apiURL;
-  csrfToken: string;
+  csrfToken: string = '';
 
   fetchCompanyList(): Observable<any> {
     return this.http.get(this.apiBaseURL + 'new-company/',
@@ -41,7 +41,8 @@ export class CompanyService {
     // The header with the CSRF token is essential
     let headers = new HttpHeaders(
       {
-        //'X-Csrftoken': this.csrfToken,
+        // 'X-CSRFToken': this.csrfToken,
+        'X-Csrftoken': this.csrfToken,
         'Content-Type': 'application/json'
       }
     );

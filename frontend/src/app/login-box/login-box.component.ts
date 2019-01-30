@@ -26,6 +26,7 @@ export class LoginBoxComponent {
       response => {
         console.log(response);
         console.log(response.headers.keys());
+        console.log(response.headers.get("authorization"));
         this.router.navigate(['/new-company/']);
       },
       errors => console.log(errors)
