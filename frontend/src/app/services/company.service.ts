@@ -6,18 +6,20 @@ import { map } from 'rxjs/operators';
 
 import { environment } from './../../environments/environment';
 
-import { CookieManager } from './cookie-manager.service';
+import { CSRFManagerService } from './csrf-manager.service';
+// import { CookieManager } from './cookie-manager.service';
 
 @Injectable()
 export class CompanyService {
 
   constructor(
     private http: HttpClient,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private csrfManagerService: CSRFManagerService
   ) {}
 
   apiBaseURL = environment.configSettings.apiURL;
-  csrfToken: string = '';
+  // csrfToken: string = '';
 
   fetchCompanyList(): Observable<any> {
     return this.http.get(this.apiBaseURL + 'new-company/',
@@ -27,10 +29,12 @@ export class CompanyService {
       ).pipe(
         map(
           (response) => {
-            this.csrfToken = this.cookieService.get('csrftoken');
-            if (!CookieManager.csrfToken) {
-              CookieManager.csrfToken = this.cookieService.get('csrftoken');
-              this.csrfToken = CookieManager.csrfToken;
+            // this.csrfToken = this.cookieService.get('csrftoken');
+            // if (!CookieManager.csrfToken) {
+            if (!this.csrfManagerService.getToken()) {
+              // CookieManager.csrfToken = this.cookieService.get('csrftoken');
+              this.csrfManagerService.setToken(this.cookieService.get('csrftoken'));
+              // this.csrfToken = CookieManager.csrfToken;
             }
             return response;
           }
@@ -41,8 +45,7 @@ export class CompanyService {
     // The header with the CSRF token is essential
     let headers = new HttpHeaders(
       {
-        // 'X-CSRFToken': this.csrfToken,
-        'X-Csrftoken': this.csrfToken,
+        'X-Csrftoken': this.csrfManagerService.getToken(),
         'Content-Type': 'application/json'
       }
     );
@@ -58,7 +61,7 @@ export class CompanyService {
     // The header with the CSRF token is essential
     let headers = new HttpHeaders(
       {
-        'X-Csrftoken': this.csrfToken,
+        'X-Csrftoken': this.csrfManagerService.getToken(),
         'Content-Type': 'application/json'
       }
     );
@@ -77,7 +80,11 @@ export class CompanyService {
 
   deleteCompany(companyId: any):Observable<any> {
     // The header with the CSRF token is essential
-    let csrfHeader = new HttpHeaders({'X-Csrftoken': this.csrfToken});
+    let csrfHeader = new HttpHeaders(
+      {
+        'X-Csrftoken': this.csrfManagerService.getToken()
+      }
+    );
     // Not setting the cookie does not seem to make a difference.
     // this.cookieService.set('csrftoken', this.csrfToken);
     return this.http.delete(this.apiBaseURL + 'new-company/' +

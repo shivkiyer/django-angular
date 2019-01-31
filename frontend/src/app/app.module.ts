@@ -14,6 +14,7 @@ import { LoginBoxComponent } from './login-box/login-box.component';
 
 import { CompanyService } from './services/company.service';
 import { UserService } from './services/user.service';
+import { CSRFManagerService } from './services/csrf-manager.service';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { UserService } from './services/user.service';
   providers: [
     CookieService,
     CompanyService,
-    UserService
+    UserService,
+    CSRFManagerService
   ],
   bootstrap: [AppComponent]
 })

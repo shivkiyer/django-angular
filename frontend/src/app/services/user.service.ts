@@ -6,22 +6,24 @@ import { map } from 'rxjs/operators';
 
 import { environment } from './../../environments/environment';
 
-import { CookieManager } from './cookie-manager.service';
+// import { CookieManager } from './cookie-manager.service';
+import { CSRFManagerService } from './csrf-manager.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private http: HttpClient,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private csrfManagerService: CSRFManagerService
   ) {}
 
   apiBaseURL = environment.configSettings.apiURL;
-  csrfToken: string;
+  // csrfToken: string;
 
   registerUser(userInfo: any) {
-    this.csrfToken = CookieManager.csrfToken;
+    // this.csrfToken = CookieManager.csrfToken;
     let headers = new HttpHeaders({
-      'X-Csrftoken': this.csrfToken,
+      'X-Csrftoken': this.csrfManagerService.getToken(),
       'Content-Type': 'application/json'
     });
     return this.http.post(
@@ -32,9 +34,9 @@ export class UserService {
   }
 
   loginUser(userInfo: any) {
-    this.csrfToken = CookieManager.csrfToken;
+    // this.csrfToken = CookieManager.csrfToken;
     let headers = new HttpHeaders({
-      'X-Csrftoken': this.csrfToken,
+      'X-Csrftoken': this.csrfManagerService.getToken(),
       'Content-Type': 'application/json'
     });
     return this.http.post(

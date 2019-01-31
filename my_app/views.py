@@ -4,7 +4,7 @@ from django.forms.models import model_to_dict
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.middleware.csrf import get_token
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 import json
 
 from rest_framework.parsers import JSONParser
@@ -30,6 +30,15 @@ else:
     CSRF_STATUS = False
 
 # Create your views here.
+
+
+@api_view(['GET'])
+def home_page(request, *args, **kwargs):
+    get_token(request)
+    print(request.COOKIES)
+    return Response()
+
+
 @method_decorator(csrf_protect, name='secure_create_company')
 @method_decorator(csrf_protect, name='secure_modify_company')
 @method_decorator(csrf_protect, name='secure_delete_company')
@@ -54,10 +63,8 @@ class NewCompany(APIView):
             "company": company_serializer.data
         })
 
-
     def secure_create_company(self, request, *args, **kwargs):
         return self.create_company(request, *args, **kwargs)
-
 
     def post(self, request, *args, **kwargs):
         # The JSONParser produces the same effect as below with cleaner code
@@ -66,7 +73,6 @@ class NewCompany(APIView):
             return self.secure_create_company(request, *args, **kwargs)
         else:
             return self.create_company(request, *args, **kwargs)
-
 
     def modify_company(self, request, *args, **kwargs):
         changed_company_data = JSONParser().parse(request)
@@ -81,10 +87,8 @@ class NewCompany(APIView):
             "company": changed_company_serializer.data
         })
 
-
     def secure_modify_company(self, request, *args, **kwargs):
         return self.modify_company(request, *args, **kwargs)
-
 
     def patch(self, request, *args, **kwargs):
         # The JSONParser produces the same effect as below with cleaner code
@@ -93,7 +97,6 @@ class NewCompany(APIView):
             return self.secure_modify_company(request, *args, **kwargs)
         else:
             return self.modify_company(request, *args, **kwargs)
-
 
     def delete_company(self, request, *args, **kwargs):
         if 'id' in kwargs:
@@ -115,22 +118,36 @@ class NewCompany(APIView):
             return self.delete_company(request, *args, **kwargs)
 
 
+@method_decorator(csrf_protect, name="secure_create_user")
 class NewUser(APIView):
-    def post(self, request, *args, **kwargs):
+    def create_user(self, request, *args, **kwargs):
         new_user_data = JSONParser().parse(request)
         new_user = User(username=new_user_data["username"])
         new_user.set_password(new_user_data["password"])
         new_user.save()
         list_of_all_users = User.objects.all()
         return Response({
-            "user": model_to_dict(new_user)
+            "user": {
+                "username": new_user.username
+            }
         })
 
+    def secure_create_user(self, request, *args, **kwargs):
+        return self.create_user(request, *args, **kwargs)
 
-@api_view(['POST'])
-def user_login(request):
+    def post(self, request, *args, **kwargs):
+        if CSRF_STATUS:
+            return self.secure_create_user(request, *args, **kwargs)
+        else:
+            return self.create_user(request, *args, **kwargs)
+
+
+def login_portal(request):
     login_data = JSONParser().parse(request)
-    user_account = authenticate(username=login_data["username"], password=login_data["password"])
+    user_account = authenticate(
+        username=login_data["username"],
+        password=login_data["password"]
+    )
     if user_account is not None:
         user_token_object = UserToken()
         user_token_object.username = user_account.username
@@ -144,6 +161,7 @@ def user_login(request):
         )
         user_token_object.jwt_token = user_jwt_token
         user_token_object.save()
+
         return Response({
             'user': user_account.username
         }, headers={
@@ -153,3 +171,16 @@ def user_login(request):
         return Response({
             'error': "Unauthorized"
         }, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@csrf_protect
+def secure_login_portal(request):
+        return login_portal(request)
+
+
+@api_view(['POST'])
+def user_login(request):
+    if CSRF_STATUS:
+        return secure_login_portal(request)
+    else:
+        return login_portal(request)

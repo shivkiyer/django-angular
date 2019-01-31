@@ -21,11 +21,8 @@ export class LoginBoxComponent {
   });
 
   loginUser() {
-    console.log(this.userLoginForm.value);
     this.userService.loginUser(this.userLoginForm).subscribe(
       response => {
-        console.log(response);
-        console.log(response.headers.keys());
         console.log(response.headers.get("authorization"));
         this.router.navigate(['/new-company/']);
       },
