@@ -3,6 +3,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { UserService } from './../services/user.service';
+import { UserAuthService } from './../services/user-auth.service';
 
 @Component({
   selector: 'app-user-login',
@@ -12,7 +13,8 @@ export class LoginBoxComponent {
 
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private userAuthService: UserAuthService
   ) {}
 
   userLoginForm = new FormGroup({
@@ -24,6 +26,7 @@ export class LoginBoxComponent {
     this.userService.loginUser(this.userLoginForm).subscribe(
       response => {
         console.log(response.headers.get("authorization"));
+        this.userAuthService.setJWTToken(response);
         this.router.navigate(['/new-company/']);
       },
       errors => console.log(errors)

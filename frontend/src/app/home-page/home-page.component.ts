@@ -31,8 +31,6 @@ export class HomePageComponent implements OnInit {
         if (!this.csrfManagerService.getToken()) {
           this.csrfManagerService.setToken(this.cookieService.get('csrftoken'));
         }
-        console.log(this.cookieService.get('csrftoken'));
-        console.log(this.csrfManagerService.getToken());
       },
       errors => {
         console.log(errors);

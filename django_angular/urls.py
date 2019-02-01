@@ -20,13 +20,14 @@ from django.views.generic import RedirectView
 from my_app import views
 
 urlpatterns = [
-    re_path(r'^$', serve, kwargs={'path': 'index.html'}, name="index"),
+    # re_path(r'^$', serve, kwargs={'path': 'index.html'}, name="index"),
+    path('', serve, kwargs={'path': 'index.html'}, name="index"),
     path('admin/', admin.site.urls),
+    path('api/', views.home_page, name='home_page'),
     path('api/new-company/<int:id>/', views.NewCompany.as_view(), name='delete_company'),
     re_path(r'^api/new-company/$', views.NewCompany.as_view(), name='new_company'),
     path('api/user/', views.NewUser.as_view(), name='new_user'),
     path('api/user/login/', views.user_login, name='login_user'),
-    path('api/', views.home_page, name='home_page'),
 
     # Serving static JS files in Angular
     re_path(r'^(?!/?static/)(?!/?media/)(?P<path>.*\..*)$', \

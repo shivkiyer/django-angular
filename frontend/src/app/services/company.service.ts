@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 import { environment } from './../../environments/environment';
 
 import { CSRFManagerService } from './csrf-manager.service';
-// import { CookieManager } from './cookie-manager.service';
+import { UserAuthService } from './user-auth.service';
 
 @Injectable()
 export class CompanyService {
@@ -15,26 +15,26 @@ export class CompanyService {
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
-    private csrfManagerService: CSRFManagerService
+    private csrfManagerService: CSRFManagerService,
+    private userAuthService: UserAuthService
   ) {}
 
   apiBaseURL = environment.configSettings.apiURL;
-  // csrfToken: string = '';
 
   fetchCompanyList(): Observable<any> {
+    let headers = new HttpHeaders({
+      'Authorization': this.userAuthService.getJWTToken()
+    })
     return this.http.get(this.apiBaseURL + 'new-company/',
         {
+          headers: headers,
           withCredentials: true
         }
       ).pipe(
         map(
           (response) => {
-            // this.csrfToken = this.cookieService.get('csrftoken');
-            // if (!CookieManager.csrfToken) {
             if (!this.csrfManagerService.getToken()) {
-              // CookieManager.csrfToken = this.cookieService.get('csrftoken');
               this.csrfManagerService.setToken(this.cookieService.get('csrftoken'));
-              // this.csrfToken = CookieManager.csrfToken;
             }
             return response;
           }

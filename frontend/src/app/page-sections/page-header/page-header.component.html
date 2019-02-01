@@ -1,0 +1,31 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2">
+      <button type="button"
+              class="btn btn-primary"
+              (click)="userLogin()"
+              *ngIf="!userLoggedIn">
+              Login
+      </button>
+      <button type="button"
+              class="btn btn-primary"
+              (click)="userLogout()"
+              *ngIf="userLoggedIn">
+              Logout
+      </button>
+    </div>
+    <div class="col-md-2">
+      <button type="button"
+              class="btn btn-primary"
+              *ngIf="userLoggedIn">
+              Manage
+      </button>
+      <button type="button"
+              class="btn btn-primary"
+              *ngIf="!userLoggedIn"
+              (click)="userRegister()">
+              Register
+      </button>
+    </div>
+  </div>
+</div>

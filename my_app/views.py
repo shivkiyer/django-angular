@@ -29,14 +29,16 @@ if not settings.DEBUG:
 else:
     CSRF_STATUS = False
 
+
 # Create your views here.
 
 
 @api_view(['GET'])
 def home_page(request, *args, **kwargs):
     get_token(request)
-    print(request.COOKIES)
-    return Response()
+    return Response({
+        "message": "received"
+    })
 
 
 @method_decorator(csrf_protect, name='secure_create_company')
@@ -48,7 +50,8 @@ class NewCompany(APIView):
         get_token(request)
         # Checking the CSRF token that is added to the response object.
         # print(dir(request))
-        print(request.COOKIES)
+        # print(request.COOKIES)
+        print(request.META.get('HTTP_AUTHORIZATION'))
         self.company_list = CompanySerializer(Company.objects.all(), many=True)
         return Response({
             "companies": self.company_list.data

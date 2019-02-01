@@ -11,10 +11,12 @@ import { NewCompanyComponent } from './new-company/new-company.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { RegisterBoxComponent } from './register-box/register-box.component';
 import { LoginBoxComponent } from './login-box/login-box.component';
+import { PageHeaderComponent } from './page-sections/page-header/page-header.component';
 
 import { CompanyService } from './services/company.service';
 import { UserService } from './services/user.service';
 import { CSRFManagerService } from './services/csrf-manager.service';
+import { UserAuthService } from './services/user-auth.service';
 
 
 @NgModule({
@@ -23,7 +25,8 @@ import { CSRFManagerService } from './services/csrf-manager.service';
     NewCompanyComponent,
     HomePageComponent,
     RegisterBoxComponent,
-    LoginBoxComponent
+    LoginBoxComponent,
+    PageHeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +38,8 @@ import { CSRFManagerService } from './services/csrf-manager.service';
     CookieService,
     CompanyService,
     UserService,
-    CSRFManagerService
+    CSRFManagerService,
+    UserAuthService
   ],
   bootstrap: [AppComponent]
 })
