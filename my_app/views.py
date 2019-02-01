@@ -41,6 +41,15 @@ def home_page(request, *args, **kwargs):
     })
 
 
+def extract_user_info(request):
+    print(request.META.get('HTTP_AUTHORIZATION'))
+    user_info = jwt.decode(
+        request.META.get('HTTP_AUTHORIZATION'),
+        settings.JWT_SECRET
+    )
+    return user_info
+
+
 @method_decorator(csrf_protect, name='secure_create_company')
 @method_decorator(csrf_protect, name='secure_modify_company')
 @method_decorator(csrf_protect, name='secure_delete_company')
@@ -51,7 +60,7 @@ class NewCompany(APIView):
         # Checking the CSRF token that is added to the response object.
         # print(dir(request))
         # print(request.COOKIES)
-        print(request.META.get('HTTP_AUTHORIZATION'))
+        extract_user_info(request)
         self.company_list = CompanySerializer(Company.objects.all(), many=True)
         return Response({
             "companies": self.company_list.data
@@ -145,6 +154,7 @@ class NewUser(APIView):
             return self.create_user(request, *args, **kwargs)
 
 
+
 def login_portal(request):
     login_data = JSONParser().parse(request)
     user_account = authenticate(
@@ -187,3 +197,14 @@ def user_login(request):
         return secure_login_portal(request)
     else:
         return login_portal(request)
+
+
+@api_view(['POST'])
+def user_logout(request):
+    user_info = extract_user_info(request)
+    print(user_info)
+    user_object = UserToken.objects.get(id=int(user_info['id']))
+    user_object.delete()
+    return Response({
+        'message': 'Logged out'
+    })

@@ -8,13 +8,15 @@ import { environment } from './../../environments/environment';
 
 // import { CookieManager } from './cookie-manager.service';
 import { CSRFManagerService } from './csrf-manager.service';
+import { UserAuthService } from './user-auth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
-    private csrfManagerService: CSRFManagerService
+    private csrfManagerService: CSRFManagerService,
+    private userAuthService: UserAuthService
   ) {}
 
   apiBaseURL = environment.configSettings.apiURL;
@@ -45,7 +47,23 @@ export class UserService {
       {
         headers: headers,
         observe: 'response'
-      },
+      }
+    );
+  }
+
+  logoutUser() {
+    let headers = new HttpHeaders({
+      'X-Csrftoken': this.csrfManagerService.getToken(),
+      'Content-Type': 'application/json',
+      'Authorization': this.userAuthService.getJWTToken()
+    });
+    return this.http.post(
+      this.apiBaseURL + 'user/logout/',
+      '',
+      {
+        headers: headers,
+        observe: 'response'
+      }
     );
   }
 }

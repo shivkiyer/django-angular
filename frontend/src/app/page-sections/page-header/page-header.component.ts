@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { UserService } from './../../services/user.service';
 import { UserAuthService } from './../../services/user-auth.service';
 
 @Component({
@@ -12,6 +13,7 @@ export class PageHeaderComponent implements OnInit {
   userLoggedIn: boolean = false;
 
   constructor(
+    private userService: UserService,
     private userAuthService: UserAuthService,
     private router: Router
   ) {}
@@ -30,6 +32,16 @@ export class PageHeaderComponent implements OnInit {
 
   userRegister() {
     this.router.navigate(['/']);
+  }
+
+  userLogout() {
+    this.userService.logoutUser().subscribe(
+      response => {
+        console.log(response);
+        this.router.navigate(['/']);
+      },
+      errors => console.log(errors)
+    );
   }
 
 }
