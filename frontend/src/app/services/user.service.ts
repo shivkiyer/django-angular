@@ -66,4 +66,9 @@ export class UserService {
       }
     );
   }
+
+  clearToken() {
+    this.userAuthService.clearToken();
+  }
+
 }

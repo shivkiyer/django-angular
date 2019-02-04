@@ -25,7 +25,6 @@ export class LoginBoxComponent {
   loginUser() {
     this.userService.loginUser(this.userLoginForm).subscribe(
       response => {
-        console.log(response.headers.get("authorization"));
         this.userAuthService.setJWTToken(response);
         this.router.navigate(['/new-company/']);
       },

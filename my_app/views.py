@@ -43,6 +43,8 @@ def home_page(request, *args, **kwargs):
 
 def extract_user_info(request):
     print(request.META.get('HTTP_AUTHORIZATION'))
+    if not request.META.get('HTTP_AUTHORIZATION'):
+        return None
     user_info = jwt.decode(
         request.META.get('HTTP_AUTHORIZATION'),
         settings.JWT_SECRET
@@ -60,17 +62,35 @@ class NewCompany(APIView):
         # Checking the CSRF token that is added to the response object.
         # print(dir(request))
         # print(request.COOKIES)
-        extract_user_info(request)
-        self.company_list = CompanySerializer(Company.objects.all(), many=True)
+        user_info = extract_user_info(request)
+        # print(user_info)
+        if user_info:
+            # print("Here")
+            # for user_items in User.objects.all():
+            #     print(model_to_dict(user_items))
+            user_object = User.objects.get(username=user_info['username'])
+            print(Company.objects.all().filter(user_manager=user_object.id))
+            # for comp in Company.objects.all():
+            #     print(comp.id, comp.user_manager)
+            fetched_companies_list = Company.objects.filter(user_manager=user_object.id)
+        else:
+            fetched_companies_list = []
+        print(fetched_companies_list)
+        self.company_list = CompanySerializer(fetched_companies_list, many=True)
         return Response({
             "companies": self.company_list.data
         })
 
     def create_company(self, request, *args, **kwargs):
+        user_info = extract_user_info(request)
+        user_object = User.objects.get(id=int(user_info['id']))
         new_company_data = JSONParser().parse(request)
+        new_company_data['user_manager'] = user_object.id
         company_serializer = CompanySerializer(data=new_company_data)
         if company_serializer.is_valid():
             company_serializer.save()
+        else:
+            print(company_serializer.errors)
         return Response({
             "company": company_serializer.data
         })
@@ -202,7 +222,6 @@ def user_login(request):
 @api_view(['POST'])
 def user_logout(request):
     user_info = extract_user_info(request)
-    print(user_info)
     user_object = UserToken.objects.get(id=int(user_info['id']))
     user_object.delete()
     return Response({

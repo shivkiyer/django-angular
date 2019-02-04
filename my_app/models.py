@@ -1,8 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 class Company(models.Model):
+    user_manager = models.IntegerField()
     name = models.CharField(default='Google', max_length=200)
     headquarters = models.CharField(default='San Jose, California', max_length=200)
     address = models.CharField(default='123 River Drive, San Jose, California', \

@@ -20,7 +20,9 @@ export class RegisterBoxComponent {
 
   registerUser() {
     this.userService.registerUser(this.userRegistrationForm).subscribe(
-      response => console.log(response),
+      response => {
+        this.userRegistrationForm.reset();
+      },
       errors => console.log(errors)
     );
   }

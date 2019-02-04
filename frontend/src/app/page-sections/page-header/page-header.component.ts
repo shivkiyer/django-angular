@@ -38,6 +38,7 @@ export class PageHeaderComponent implements OnInit {
     this.userService.logoutUser().subscribe(
       response => {
         console.log(response);
+        this.userService.clearToken();
         this.router.navigate(['/']);
       },
       errors => console.log(errors)

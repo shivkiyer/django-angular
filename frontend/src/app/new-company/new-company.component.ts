@@ -59,9 +59,13 @@ export class NewCompanyComponent implements OnInit {
     this.companyService.fetchCompanyList().subscribe(
       (response) => {
         this.companyList = response['companies'];
+        console.log(this.companyList);
         if (this.companyList.length>0) {
           this.areCompanies = true;
           this.showCompanies = true;
+        } else {
+          this.areCompanies = false;
+          this.showCompanies = false;
         }
         this.displayForm = false;
       },

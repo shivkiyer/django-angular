@@ -23,7 +23,8 @@ export class CompanyService {
 
   fetchCompanyList(): Observable<any> {
     let headers = new HttpHeaders({
-      'Authorization': this.userAuthService.getJWTToken()
+      'Authorization': this.userAuthService.getJWTToken(),
+      'Content-Type': 'application/json'
     })
     return this.http.get(this.apiBaseURL + 'new-company/',
         {
@@ -46,7 +47,8 @@ export class CompanyService {
     let headers = new HttpHeaders(
       {
         'X-Csrftoken': this.csrfManagerService.getToken(),
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': this.userAuthService.getJWTToken()
       }
     );
     // Not setting the cookie does not seem to make a difference.
