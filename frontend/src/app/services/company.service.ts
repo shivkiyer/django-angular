@@ -64,7 +64,8 @@ export class CompanyService {
     let headers = new HttpHeaders(
       {
         'X-Csrftoken': this.csrfManagerService.getToken(),
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': this.userAuthService.getJWTToken()
       }
     );
     // Not setting the cookie does not seem to make a difference.
@@ -84,7 +85,8 @@ export class CompanyService {
     // The header with the CSRF token is essential
     let csrfHeader = new HttpHeaders(
       {
-        'X-Csrftoken': this.csrfManagerService.getToken()
+        'X-Csrftoken': this.csrfManagerService.getToken(),
+        'Authorization': this.userAuthService.getJWTToken()
       }
     );
     // Not setting the cookie does not seem to make a difference.

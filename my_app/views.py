@@ -64,17 +64,26 @@ class NewCompany(APIView):
         # print(request.COOKIES)
         user_info = extract_user_info(request)
         # print(user_info)
-        if user_info:
-            # print("Here")
-            # for user_items in User.objects.all():
-            #     print(model_to_dict(user_items))
+        try:
             user_object = User.objects.get(username=user_info['username'])
-            print(Company.objects.all().filter(user_manager=user_object.id))
-            # for comp in Company.objects.all():
-            #     print(comp.id, comp.user_manager)
             fetched_companies_list = Company.objects.filter(user_manager=user_object.id)
-        else:
-            fetched_companies_list = []
+        except:
+            return Response({
+                'message': 'User not found'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        # if user_info:
+        #     # print("Here")
+        #     # for user_items in User.objects.all():
+        #     #     print(model_to_dict(user_items))
+        #     user_object = User.objects.get(username=user_info['username'])
+        #     print(Company.objects.all().filter(user_manager=user_object.id))
+        #     # for comp in Company.objects.all():
+        #     #     print(comp.id, comp.user_manager)
+        #     fetched_companies_list = Company.objects.filter(user_manager=user_object.id)
+        # else:
+        #     fetched_companies_list = []
+        # fetched_companies_list = Company.objects.all()
+        # print(Company.objects.all())
         print(fetched_companies_list)
         self.company_list = CompanySerializer(fetched_companies_list, many=True)
         return Response({
@@ -83,7 +92,12 @@ class NewCompany(APIView):
 
     def create_company(self, request, *args, **kwargs):
         user_info = extract_user_info(request)
-        user_object = User.objects.get(id=int(user_info['id']))
+        try:
+            user_object = User.objects.get(username=user_info['username'])
+        except:
+            return Response({
+                'message': 'User not found'
+            }, status=status.HTTP_400_BAD_REQUEST)
         new_company_data = JSONParser().parse(request)
         new_company_data['user_manager'] = user_object.id
         company_serializer = CompanySerializer(data=new_company_data)
@@ -107,14 +121,32 @@ class NewCompany(APIView):
             return self.create_company(request, *args, **kwargs)
 
     def modify_company(self, request, *args, **kwargs):
+        user_info = extract_user_info(request)
+        try:
+            user_object = User.objects.get(username=user_info['username'])
+        except:
+            return Response({
+                'message': 'User not found'
+            }, status=status.HTTP_400_BAD_REQUEST)
         changed_company_data = JSONParser().parse(request)
         changed_company = Company.objects.get(id=int(changed_company_data['companyId']))
+        if not changed_company.user_manager==user_object.id:
+            return Response({
+                'message': 'Not authorized'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            print(changed_company.user_manager, user_object.id)
+        print(changed_company_data)
+        changed_company_data['companyForm']['user_manager'] = changed_company.user_manager
         changed_company_serializer = CompanySerializer(
                         changed_company,
                         data=changed_company_data['companyForm']
                     )
         if changed_company_serializer.is_valid():
             changed_company_serializer.save()
+            print("saved")
+        else:
+            print(changed_company_serializer.errors)
         return Response({
             "company": changed_company_serializer.data
         })
@@ -131,9 +163,20 @@ class NewCompany(APIView):
             return self.modify_company(request, *args, **kwargs)
 
     def delete_company(self, request, *args, **kwargs):
+        user_info = extract_user_info(request)
+        try:
+            user_object = User.objects.get(username=user_info['username'])
+        except:
+            return Response({
+                'message': 'User not found'
+            }, status=status.HTTP_400_BAD_REQUEST)
         if 'id' in kwargs:
             company_id = kwargs['id']
         delete_company = Company.objects.get(id=int(company_id))
+        if not delete_company.user_manager==user_object.id:
+            return Response({
+                'message': 'Not authorized'
+            }, status=status.HTTP_401_UNAUTHORIZED)
         company_deleted_serialized = CompanySerializer(delete_company)
         delete_company.delete()
         return Response({
