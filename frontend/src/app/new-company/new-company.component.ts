@@ -40,6 +40,8 @@ export class NewCompanyComponent implements OnInit {
   blankForm: boolean = true;
   updateCompanyIndex: number = -1;
 
+  errorMessage: string = '';
+
 
   constructor(
     private companyService: CompanyService
@@ -59,7 +61,6 @@ export class NewCompanyComponent implements OnInit {
     this.companyService.fetchCompanyList().subscribe(
       (response) => {
         this.companyList = response['companies'];
-        console.log(this.companyList);
         if (this.companyList.length>0) {
           this.areCompanies = true;
           this.showCompanies = true;
@@ -96,9 +97,13 @@ export class NewCompanyComponent implements OnInit {
           response => {
             this.companyList.push(this.newCompanyForm.value);
             this.companyAdded();
+            this.errorMessage = '';
           },
           errors => {
-            console.log(errors);
+            this.errorMessage = errors.error.message;
+            if (errors.status == 401) {
+              this.errorMessage += " You must be logged in to create a new data entry."
+            }
           }
         );
   }

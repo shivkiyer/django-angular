@@ -42,7 +42,6 @@ def home_page(request, *args, **kwargs):
 
 
 def extract_user_info(request):
-    print(request.META.get('HTTP_AUTHORIZATION'))
     if not request.META.get('HTTP_AUTHORIZATION'):
         return None
     user_info = jwt.decode(
@@ -59,32 +58,12 @@ class NewCompany(APIView):
     company_list = []
     def get(self, request, *args, **kwargs):
         get_token(request)
-        # Checking the CSRF token that is added to the response object.
-        # print(dir(request))
-        # print(request.COOKIES)
         user_info = extract_user_info(request)
-        # print(user_info)
         try:
             user_object = User.objects.get(username=user_info['username'])
             fetched_companies_list = Company.objects.filter(user_manager=user_object.id)
         except:
-            return Response({
-                'message': 'User not found'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        # if user_info:
-        #     # print("Here")
-        #     # for user_items in User.objects.all():
-        #     #     print(model_to_dict(user_items))
-        #     user_object = User.objects.get(username=user_info['username'])
-        #     print(Company.objects.all().filter(user_manager=user_object.id))
-        #     # for comp in Company.objects.all():
-        #     #     print(comp.id, comp.user_manager)
-        #     fetched_companies_list = Company.objects.filter(user_manager=user_object.id)
-        # else:
-        #     fetched_companies_list = []
-        # fetched_companies_list = Company.objects.all()
-        # print(Company.objects.all())
-        print(fetched_companies_list)
+            fetched_companies_list = []
         self.company_list = CompanySerializer(fetched_companies_list, many=True)
         return Response({
             "companies": self.company_list.data
@@ -96,15 +75,18 @@ class NewCompany(APIView):
             user_object = User.objects.get(username=user_info['username'])
         except:
             return Response({
-                'message': 'User not found'
-            }, status=status.HTTP_400_BAD_REQUEST)
+                'message': 'User not logged in.'
+            }, status=status.HTTP_401_UNAUTHORIZED)
         new_company_data = JSONParser().parse(request)
         new_company_data['user_manager'] = user_object.id
         company_serializer = CompanySerializer(data=new_company_data)
         if company_serializer.is_valid():
             company_serializer.save()
         else:
-            print(company_serializer.errors)
+            return Response({
+                'message': 'There was an error in saving the company.',
+                'errors': company_serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
         return Response({
             "company": company_serializer.data
         })
@@ -126,17 +108,18 @@ class NewCompany(APIView):
             user_object = User.objects.get(username=user_info['username'])
         except:
             return Response({
-                'message': 'User not found'
-            }, status=status.HTTP_400_BAD_REQUEST)
+                'message': 'User not logged in.'
+            }, status=status.HTTP_401_UNAUTHORIZED)
         changed_company_data = JSONParser().parse(request)
         changed_company = Company.objects.get(id=int(changed_company_data['companyId']))
         if not changed_company.user_manager==user_object.id:
             return Response({
-                'message': 'Not authorized'
+                'message': 'You cannot modify this data.'
             }, status=status.HTTP_401_UNAUTHORIZED)
         else:
-            print(changed_company.user_manager, user_object.id)
-        print(changed_company_data)
+            return Response({
+                'message': 'User not logged in'
+            }, status=status.HTTP_401_UNAUTHORIZED)
         changed_company_data['companyForm']['user_manager'] = changed_company.user_manager
         changed_company_serializer = CompanySerializer(
                         changed_company,
@@ -144,9 +127,11 @@ class NewCompany(APIView):
                     )
         if changed_company_serializer.is_valid():
             changed_company_serializer.save()
-            print("saved")
         else:
-            print(changed_company_serializer.errors)
+            return Response({
+                'message': 'There was an error in modifying.',
+                'errors': changed_company_serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
         return Response({
             "company": changed_company_serializer.data
         })
@@ -169,13 +154,13 @@ class NewCompany(APIView):
         except:
             return Response({
                 'message': 'User not found'
-            }, status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_401_UNAUTHORIZED)
         if 'id' in kwargs:
             company_id = kwargs['id']
         delete_company = Company.objects.get(id=int(company_id))
         if not delete_company.user_manager==user_object.id:
             return Response({
-                'message': 'Not authorized'
+                'message': 'You cannot delete this item.'
             }, status=status.HTTP_401_UNAUTHORIZED)
         company_deleted_serialized = CompanySerializer(delete_company)
         delete_company.delete()
@@ -199,8 +184,12 @@ class NewUser(APIView):
         new_user_data = JSONParser().parse(request)
         new_user = User(username=new_user_data["username"])
         new_user.set_password(new_user_data["password"])
-        new_user.save()
-        list_of_all_users = User.objects.all()
+        try:
+            new_user.save()
+        except:
+            return Response({
+                'message': 'Registration failed.'
+            }, status=status.HTTP_400_BAD_REQUEST)
         return Response({
             "user": {
                 "username": new_user.username
@@ -245,7 +234,7 @@ def login_portal(request):
         })
     else:
         return Response({
-            'error': "Unauthorized"
+            'message': "User login/password incorrect."
         }, status=status.HTTP_401_UNAUTHORIZED)
 
 

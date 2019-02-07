@@ -26,3 +26,8 @@
   padding-right: 5px;
   border-radius: 5px;
 }
+
+.error-message {
+  font-size: 120%;
+  color: red;
+}

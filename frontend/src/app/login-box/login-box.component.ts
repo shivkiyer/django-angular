@@ -22,13 +22,20 @@ export class LoginBoxComponent {
     password: new FormControl('')
   });
 
+  statusMessage: string = '';
+
   loginUser() {
     this.userService.loginUser(this.userLoginForm).subscribe(
       response => {
         this.userAuthService.setJWTToken(response);
-        this.router.navigate(['/new-company/']);
+        this.statusMessage = 'Login successful! Just a moment ...';
+        setTimeout(() => {
+          this.router.navigate(['/new-company/']);
+        }, 3000);
       },
-      errors => console.log(errors)
+      errors => {
+        this.statusMessage = errors.error.message;
+      }
     );
   }
 

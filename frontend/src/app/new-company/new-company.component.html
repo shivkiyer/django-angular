@@ -240,6 +240,13 @@
                       (click)="updateCompany(updateCompanyIndex)">
                       Change
               </button>
+              <div *ngIf="errorMessage.length>0">
+                <br>
+                <p class="error-message">
+                    {{ errorMessage }}
+                </p>
+              </div>
+
             </div>
           </div>
 

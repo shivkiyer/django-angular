@@ -1,31 +1,30 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-2">
-      <button type="button"
-              class="btn btn-primary"
-              (click)="userLogin()"
-              *ngIf="!userLoggedIn">
-              Login
-      </button>
-      <button type="button"
-              class="btn btn-primary"
-              (click)="userLogout()"
-              *ngIf="userLoggedIn">
-              Logout
-      </button>
+<div class="top-header-bar">
+  <div *ngIf="!smallWindow">
+    <div class="top-header-left">
+      <ul class="header-navigation-bar">
+        <li><a routerLink="/">HOME</a></li>
+        <li><a routerLink="/about">ABOUT</a></li>
+        <li *ngIf="!userLoggedIn"><a routerLink="/">LOGIN</a></li>
+        <li *ngIf="!userLoggedIn"><a routerLink="/">REGISTER</a></li>
+        <li *ngIf="userLoggedIn"><a routerLink="/">LOGOUT</a></li>
+        <li *ngIf="userLoggedIn"><a routerLink="/">MANAGE</a></li>
+      </ul>
     </div>
-    <div class="col-md-2">
-      <button type="button"
-              class="btn btn-primary"
-              *ngIf="userLoggedIn">
-              Manage
-      </button>
-      <button type="button"
-              class="btn btn-primary"
-              *ngIf="!userLoggedIn"
-              (click)="userRegister()">
-              Register
-      </button>
-    </div>
+  </div>
+
+  <div *ngIf="smallWindow">
+      <div class="top-header-small">
+          <div class="dropdown-mobile">
+              <span class="glyphicon glyphicon-menu-hamburger"></span>
+              <div class="dropdown-mobile-content">
+                  <a routerLink="/">Home</a>
+                  <a routerLink="/about">ABOUT</a>
+                  <a *ngIf="!userLoggedIn" routerLink="/">LOGIN</a>
+                  <a *ngIf="!userLoggedIn" routerLink="/">REGISTER</a>
+                  <a *ngIf="userLoggedIn" routerLink="/">LOGOUT</a>
+                  <a *ngIf="userLoggedIn" routerLink="/">MANAGE</a>
+              </div>
+          </div>
+      </div>
   </div>
 </div>
