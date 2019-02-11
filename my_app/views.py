@@ -64,6 +64,7 @@ class NewCompany(APIView):
             fetched_companies_list = Company.objects.filter(user_manager=user_object.id)
         except:
             fetched_companies_list = []
+        fetched_companies_list = Company.objects.all()
         self.company_list = CompanySerializer(fetched_companies_list, many=True)
         return Response({
             "companies": self.company_list.data
@@ -153,7 +154,7 @@ class NewCompany(APIView):
             user_object = User.objects.get(username=user_info['username'])
         except:
             return Response({
-                'message': 'User not found'
+                'message': 'User not logged in.'
             }, status=status.HTTP_401_UNAUTHORIZED)
         if 'id' in kwargs:
             company_id = kwargs['id']

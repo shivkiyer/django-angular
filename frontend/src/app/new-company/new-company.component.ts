@@ -40,7 +40,8 @@ export class NewCompanyComponent implements OnInit {
   blankForm: boolean = true;
   updateCompanyIndex: number = -1;
 
-  errorMessage: string = '';
+  formErrorMessage: string = '';
+  serverErrorMessage: string = '';
 
 
   constructor(
@@ -60,6 +61,8 @@ export class NewCompanyComponent implements OnInit {
   displayCompanies() {
     this.companyService.fetchCompanyList().subscribe(
       (response) => {
+        this.serverErrorMessage = '';
+        this.formErrorMessage = '';
         this.companyList = response['companies'];
         if (this.companyList.length>0) {
           this.areCompanies = true;
@@ -71,7 +74,7 @@ export class NewCompanyComponent implements OnInit {
         this.displayForm = false;
       },
       (errors) => {
-        console.log(errors);
+        this.serverErrorMessage = 'Could not fetch company list.';
       }
     );
   }
@@ -79,11 +82,14 @@ export class NewCompanyComponent implements OnInit {
 
   hideCompanies() {
     this.showCompanies = false;
+    this.formErrorMessage = '';
+    this.serverErrorMessage = '';
   }
 
 
   companyAdded() {
     this.newCompanyForm.reset();
+    this.formErrorMessage = '';
     this.displayForm = false;
     if (!this.areCompanies) {
       this.areCompanies = true;
@@ -97,12 +103,12 @@ export class NewCompanyComponent implements OnInit {
           response => {
             this.companyList.push(this.newCompanyForm.value);
             this.companyAdded();
-            this.errorMessage = '';
+            this.formErrorMessage = '';
           },
           errors => {
-            this.errorMessage = errors.error.message;
+            this.formErrorMessage = errors.error.message;
             if (errors.status == 401) {
-              this.errorMessage += " You must be logged in to create a new data entry."
+              this.formErrorMessage += " You must be logged in to create a new data entry.";
             }
           }
         );
@@ -147,7 +153,10 @@ export class NewCompanyComponent implements OnInit {
             this.companyAdded();
           },
           errors => {
-            console.log(errors);
+            this.formErrorMessage = errors.error.message;
+            if (errors.status == 401) {
+              this.formErrorMessage += " You must be logged in and the owner of a data entry to modify it.";
+            }
           }
         );
   }
@@ -162,7 +171,10 @@ export class NewCompanyComponent implements OnInit {
         this.expandCompany = -1;
       },
       errors => {
-        console.log(errors);
+        this.serverErrorMessage = errors.error.message;
+        if (errors.status == 401) {
+          this.serverErrorMessage += " You must be logged in and the owner of a data entry to delete it.";
+        }
       }
     );
   }

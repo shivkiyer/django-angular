@@ -15,10 +15,16 @@
           (click)="hideCompanies()">
           Hide Companies
   </button>
+  <br> <br>
 
-  <p *ngIf="!areCompanies">
+  <p *ngIf="!areCompanies&&serverErrorMessage.length===0">
     No companies in database. Click on "New Company" button below to add one.
   </p>
+  <div *ngIf="serverErrorMessage">
+    <p class="error-message">
+      {{ serverErrorMessage }}
+    </p>
+  </div>
 
   <div *ngIf="showCompanies">
     <div *ngIf="areCompanies">
@@ -240,10 +246,10 @@
                       (click)="updateCompany(updateCompanyIndex)">
                       Change
               </button>
-              <div *ngIf="errorMessage.length>0">
+              <div *ngIf="formErrorMessage.length>0">
                 <br>
                 <p class="error-message">
-                    {{ errorMessage }}
+                    {{ formEerrorMessage }}
                 </p>
               </div>
 
