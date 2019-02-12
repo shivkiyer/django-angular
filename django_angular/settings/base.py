@@ -62,7 +62,8 @@ ROOT_URLCONF = 'django_angular.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ANGULAR_APP_DIR],
+        # 'DIRS': [ANGULAR_APP_DIR],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

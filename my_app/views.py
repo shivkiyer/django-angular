@@ -64,7 +64,10 @@ class NewCompany(APIView):
             fetched_companies_list = Company.objects.filter(user_manager=user_object.id)
         except:
             fetched_companies_list = []
-        fetched_companies_list = Company.objects.all()
+        # The next line is for test purposes.
+        # To check if companies created by other users
+        # can be modified or deleted.
+        # fetched_companies_list = Company.objects.all()
         self.company_list = CompanySerializer(fetched_companies_list, many=True)
         return Response({
             "companies": self.company_list.data
@@ -116,10 +119,6 @@ class NewCompany(APIView):
         if not changed_company.user_manager==user_object.id:
             return Response({
                 'message': 'You cannot modify this data.'
-            }, status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            return Response({
-                'message': 'User not logged in'
             }, status=status.HTTP_401_UNAUTHORIZED)
         changed_company_data['companyForm']['user_manager'] = changed_company.user_manager
         changed_company_serializer = CompanySerializer(
@@ -227,7 +226,6 @@ def login_portal(request):
         )
         user_token_object.jwt_token = user_jwt_token
         user_token_object.save()
-
         return Response({
             'user': user_account.username
         }, headers={
@@ -241,7 +239,7 @@ def login_portal(request):
 
 @csrf_protect
 def secure_login_portal(request):
-        return login_portal(request)
+    return login_portal(request)
 
 
 @api_view(['POST'])

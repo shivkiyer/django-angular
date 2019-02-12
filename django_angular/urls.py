@@ -17,11 +17,14 @@ from django.contrib import admin
 from django.urls import path, re_path
 from django.contrib.staticfiles.views import serve
 from django.views.generic import RedirectView
+from django.views.generic import TemplateView
 from my_app import views
 
 urlpatterns = [
+    #Initially index.html file was specifically
     # re_path(r'^$', serve, kwargs={'path': 'index.html'}, name="index"),
-    path('', serve, kwargs={'path': 'index.html'}, name="index"),
+    # path('', serve, kwargs={'path': 'index.html'}, name="index"),
+
     path('admin/', admin.site.urls),
     path('api/', views.home_page, name='home_page'),
     path('api/new-company/<int:id>/', views.NewCompany.as_view(), name='delete_company'),
@@ -30,7 +33,11 @@ urlpatterns = [
     path('api/user/login/', views.user_login, name='login_user'),
     path('api/user/logout/', views.user_logout, name='logout_user'),
 
+    # Now all paths that are not API calls are redirected to Angular app
+    re_path('^.*', TemplateView.as_view(template_name='ang_index.html'), name='index'),
+
+    # JS files are loaded as static files. So no need for redirection
     # Serving static JS files in Angular
-    re_path(r'^(?!/?static/)(?!/?media/)(?P<path>.*\..*)$', \
-            RedirectView.as_view(url='/static/%(path)s', permanent=False)),
+    # re_path(r'^(?!/?static/)(?!/?media/)(?P<path>.*\..*)$', \
+    #         RedirectView.as_view(url='/static/%(path)s', permanent=False)),
 ]

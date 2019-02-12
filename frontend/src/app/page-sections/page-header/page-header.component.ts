@@ -35,6 +35,7 @@ export class PageHeaderComponent implements OnInit {
     }
   }
 
+
   @HostListener('window:resize', ['$event'])
   onResize(event?) {
     if (window.innerWidth < 960) {
@@ -44,18 +45,10 @@ export class PageHeaderComponent implements OnInit {
     }
   }
 
-  userLogin() {
-    this.router.navigate(['/']);
-  }
-
-  userRegister() {
-    this.router.navigate(['/']);
-  }
 
   userLogout() {
     this.userService.logoutUser().subscribe(
       response => {
-        console.log(response);
         this.userService.clearToken();
         this.router.navigate(['/']);
       },
