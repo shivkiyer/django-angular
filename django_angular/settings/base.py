@@ -131,3 +131,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     ANGULAR_APP_DIR,
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

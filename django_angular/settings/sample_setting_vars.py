@@ -7,3 +7,9 @@ PROJ_SECRET_KEY = some_key
 
 # JWT_SECRET
 JWT_SECRET = some_key
+
+# List of IP addresses for ALLOWED_HOSTS
+IP_ADDRESS_LIST = [some_list]
+
+# List of Hostnames for ALLOWED_HOSTS
+HOSTNAME_LIST = [some_list]

@@ -3,5 +3,6 @@ migrations/
 setting_vars.py
 __py_cache__/
 db.sqlite3
+static/
 
 # Gitignore settings of Angular in frontend/.gitignore
