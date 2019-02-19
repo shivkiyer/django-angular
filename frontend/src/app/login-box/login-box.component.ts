@@ -31,7 +31,7 @@ export class LoginBoxComponent {
         this.statusMessage = 'Login successful! Just a moment ...';
         setTimeout(() => {
           this.router.navigate(['/new-company/']);
-        }, 3000);
+        }, 1500);
       },
       errors => {
         this.statusMessage = errors.error.message;

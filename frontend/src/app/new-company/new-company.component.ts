@@ -24,12 +24,16 @@ export class NewCompanyComponent implements OnInit {
                                               Validators.min(this.earliestYear),
                                               Validators.max(this.latestYear)]);
 
+  visibilitySetting = ['Public', 'Private'];
+  visibility: FormControl = new FormControl('Private');
+
   newCompanyForm: FormGroup = new FormGroup({
     'name': this.name,
     'headquarters': this.headquarters,
     'address': this.address,
     'company_website': this.company_website,
-    'established_year': this.established_year
+    'established_year': this.established_year,
+    'visibility': this.visibility
   });
 
   companyList = [];
@@ -130,7 +134,8 @@ export class NewCompanyComponent implements OnInit {
       'headquarters': this.companyList[companyIndex].headquarters,
       'address': this.companyList[companyIndex].address,
       'company_website': this.companyList[companyIndex].company_website,
-      'established_year': this.companyList[companyIndex].established_year
+      'established_year': this.companyList[companyIndex].established_year,
+      'visibility': this.companyList[companyIndex].visibility
     })
     this.displayForm = true;
     this.showCompanies = false;

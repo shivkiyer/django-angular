@@ -18,7 +18,8 @@ class CompanySerializer(serializers.ModelSerializer):
             'headquarters',
             'address',
             'company_website',
-            'established_year'
+            'established_year',
+            'visibility'
         )
 
 

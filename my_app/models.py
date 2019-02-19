@@ -12,6 +12,10 @@ class Company(models.Model):
     company_website = models.URLField(default='http://www.google.com', \
                 blank=True, null=True)
     established_year = models.IntegerField(default=2000, blank=True, null=True)
+    visibility = models.CharField(max_length=7, choices=(
+                    ('Public', 'Public'),
+                    ('Private', 'Private')
+                ), default='Private')
 
     def __str__(self):
         return str(self.name) + " in " + str(self.headquarters)

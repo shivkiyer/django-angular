@@ -64,11 +64,16 @@ class NewCompany(APIView):
             fetched_companies_list = Company.objects.filter(user_manager=user_object.id)
         except:
             fetched_companies_list = []
+        remaining_companies_list = Company.objects.exclude(user_manager=user_object.id).filter(visibility='Public')
+        for rem_items in remaining_companies_list:
+            print(rem_items, rem_items.visibility)
+        print(remaining_companies_list)
+        total_company_list = fetched_companies_list | remaining_companies_list
         # The next line is for test purposes.
         # To check if companies created by other users
         # can be modified or deleted.
         # fetched_companies_list = Company.objects.all()
-        self.company_list = CompanySerializer(fetched_companies_list, many=True)
+        self.company_list = CompanySerializer(total_company_list, many=True)
         return Response({
             "companies": self.company_list.data
         })

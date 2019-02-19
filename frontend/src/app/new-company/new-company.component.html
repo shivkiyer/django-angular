@@ -47,6 +47,9 @@
             <span *ngIf="companyIndex===expandCompany">
               <br> {{ companyItem.established_year }}
             </span>
+            <span *ngIf="companyIndex===expandCompany">
+              <br> {{ companyItem.visibility }}
+            </span>
 
             <div *ngIf="companyIndex===expandCompany">
               <div class="row">
@@ -231,6 +234,26 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <div class="row">
+              <div class="col-sm-3 label-alignment">
+                <label for="company-visibility"
+                        class="control-label">
+                        Visibility
+                </label>
+              </div>
+
+              <div class="col-sm-5 col-md-2">
+                <select class="form-control" formControlName="visibility">
+                  <option *ngFor="let visValue of visibilitySetting; let visIndex=index"
+                          [value]="visValue">
+                          {{ visValue }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div class="row">
             <div class="col-sm-offset-3">
               <button type="submit"
@@ -249,7 +272,7 @@
               <div *ngIf="formErrorMessage.length>0">
                 <br>
                 <p class="error-message">
-                    {{ formEerrorMessage }}
+                    {{ formErrorMessage }}
                 </p>
               </div>
 
