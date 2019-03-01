@@ -13,3 +13,10 @@ IP_ADDRESS_LIST = [some_list]
 
 # List of Hostnames for ALLOWED_HOSTS
 HOSTNAME_LIST = [some_list]
+
+# POSTGRES Authentication
+PROJ_DB_NAME = 'somedb'
+PROJ_DB_USER = 'someuser'
+PROJ_DB_PASSWORD = 'somepass'
+PROJ_DB_HOST = 'localhost'
+PROJ_DB_PORT = 'port'
